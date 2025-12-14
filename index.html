@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mindset Garden</title>
+    <style>
+        :root {
+            /* 浅色梦幻配色 */
+            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.9);
+            --text-main: #555;
+            --text-highlight: #7c9ae6; 
+            --btn-gradient: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+            --danger-bg: rgba(255, 135, 135, 0.1);
+            --danger-text: #ff6b6b;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        /* 漂浮的背景装饰 */
+        .bubble-bg {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            z-index: -1;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* 主容器 */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+
+        /* 磨砂玻璃卡片 */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        h1 {
+            font-weight: 300;
+            color: var(--text-highlight);
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+            font-size: 1.8rem;
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid #fff;
+            border-radius: 16px;
+            padding: 15px;
+            font-size: 1rem;
+            color: #444;
+            outline: none;
+            resize: none;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        textarea:focus {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 15px rgba(161, 196, 253, 0.4);
+            border-color: #a1c4fd;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        button {
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: var(--btn-gradient);
+            box-shadow: 0 4px 15px rgba(161, 196, 253, 0.5);
+            flex: 2;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.8);
+            color: #7c9ae6;
+            border: 1px solid #fff;
+            flex: 1;
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        /* 设置图标 */
+        .settings-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            opacity: 0.5;
+            font-size: 1.2rem;
+            transition: opacity 0.3s;
+            color: #7c9ae6;
+        }
+        .settings-icon:hover { opacity: 1; }
+
+        /* 设置面板 */
+        #settings-panel {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.98);
+            z-index: 20;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 24px;
+        }
+
+        .settings-input {
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #eee;
+            background: #f9f9f9;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        /* 历史星空视图 */
+        #history-view {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #f5f7fa 0%, #c3cfe2 100%);
+            z-index: 50;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+            perspective: 1000px;
+        }
+
+        .history-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 60;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.5);
+            color: #666;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        /* 愿望气泡 */
+        .wish-bubble {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: transparent; 
+            transition: transform 0.3s, filter 0.3s;
+            animation: breathe 5s infinite ease-in-out;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.6), 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .wish-bubble::after {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 25%;
+            height: 12%;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+            transform: rotate(-45deg);
+        }
+        
+        .wish-bubble:hover {
+            transform: scale(1.1) !important;
+            z-index: 1000 !important;
+            filter: blur(0px) !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* 通用弹窗样式 */
+        .modal {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 24px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(161, 196, 253, 0.3);
+            text-align: center;
+            display: none;
+            border: 1px solid rgba(255,255,255,1);
+        }
+
+        /* 详情弹窗 (层级 2000) */
+        #detail-modal { z-index: 2000; }
+
+        /* 删除确认弹窗 (层级 3000 - 必须更高) */
+        #delete-confirm-modal { z-index: 3000; }
+        
+        .modal-btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+        
+        .modal-close-btn {
+            background: #f0f2f5;
+            color: #555;
+            border: none;
+            flex: 2;
+        }
+
+        .modal-delete-btn {
+            background: var(--danger-bg);
+            border: 1px solid var(--danger-text);
+            color: var(--danger-text);
+            flex: 1;
+        }
+        
+        /* 删除弹窗里的红色确认按钮 */
+        .btn-confirm-delete {
+            background: #ff6b6b;
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .toast {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95);
+            color: #555;
+            padding: 12px 30px;
+            border-radius: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 4000;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 600px) {
+            .glass-card { min-height: 60vh; }
+            textarea { height: 180px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="bubbles-bg"></div>
+    <div class="toast" id="toast">✅ 提示信息</div>
+
+    <div class="container" id="main-page">
+        <div class="glass-card">
+            <div class="settings-icon" onclick="toggleSettings()">⚙️</div>
+            
+            <h1>Mindset Garden</h1>
+            <div class="subtitle">心诚则灵 · 时光长河</div>
+            
+            <div id="settings-panel">
+                <h3 style="color:#7c9ae6">☁️ 备份设置</h3>
+                <p style="font-size:0.8rem; color:#999; margin-bottom:15px">配置 GitHub Token 以启用云同步</p>
+                <input type="text" id="gh-token" class="settings-input" placeholder="GitHub Personal Access Token">
+                <input type="text" id="gh-username" class="settings-input" placeholder="GitHub 用户名">
+                <input type="text" id="gh-repo" class="settings-input" placeholder="仓库名 (如: mindset-well)">
+                <div style="margin-top:20px; width:80%; display:flex; gap:10px;">
+                    <button class="btn-primary" onclick="saveSettings()">保存</button>
+                    <button class="btn-secondary" onclick="toggleSettings()">返回</button>
+                </div>
+            </div>
+
+            <textarea id="wish-input" placeholder="写下你的心法...&#10;最新的念头会最清晰，过去的念头将化作背景。"></textarea>
+            
+            <div class="btn-group">
+                <button class="btn-primary" onclick="submitWish()">🌟 注入能量</button>
+                <button class="btn-secondary" onclick="openHistory()">🔮 时光回溯</button>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                 <span onclick="syncFromGithub()" style="font-size: 0.8rem; color:#aaa; cursor:pointer; text-decoration:underline;">🔄 从 GitHub 恢复数据</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 历史视图 -->
+    <div id="history-view">
+        <div class="history-controls">
+            <button class="nav-btn" onclick="closeHistory()">← 返回花园</button>
+            <button class="nav-btn" onclick="syncToGithub()">☁️ 云端保存</button>
+        </div>
+        <div id="bubbles-container"></div>
+        
+        <!-- 详情弹窗 -->
+        <div class="modal" id="detail-modal">
+            <p style="font-size:0.85rem; color:#999; margin-bottom:15px;" id="modal-date"></p>
+            <p style="font-size:1.1rem; line-height:1.8; color:#444; text-align:justify;" id="modal-content"></p>
+            
+            <div class="modal-btn-group">
+                <button class="nav-btn modal-delete-btn" onclick="askToDelete()">🗑️ 删除</button>
+                <button class="nav-btn modal-close-btn" onclick="closeModal()">收起</button>
+            </div>
+        </div>
+
+        <!-- 删除确认弹窗 (新增) -->
+        <div class="modal" id="delete-confirm-modal">
+            <h3 style="margin-top:0; color:#555;">确认清理？</h3>
+            <p style="color:#666; font-size:0.95rem; line-height:1.5;">这条心法将随风而去，<br>云端记录也将同步移除。</p>
+            <div class="modal-btn-group">
+                <button class="nav-btn" style="border:1px solid #ddd;" onclick="closeDeleteConfirm()">取消</button>
+                <button class="nav-btn btn-confirm-delete" onclick="executeDelete()">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FILENAME = 'wishes.json';
+        let wishes = JSON.parse(localStorage.getItem('mindset_wishes')) || [];
+        let currentWishId = null; 
+
+        const BUBBLE_COLORS = [
+            'rgba(255, 183, 178, 0.9)', 
+            'rgba(255, 223, 186, 0.9)', 
+            'rgba(255, 255, 186, 0.9)', 
+            'rgba(186, 255, 201, 0.9)', 
+            'rgba(186, 225, 255, 0.9)', 
+            'rgba(226, 194, 255, 0.9)', 
+            'rgba(255, 218, 233, 0.9)'  
+        ];
+
+        function loadSettings() {
+            document.getElementById('gh-token').value = localStorage.getItem('gh_token') || '';
+            document.getElementById('gh-username').value = localStorage.getItem('gh_username') || '';
+            document.getElementById('gh-repo').value = localStorage.getItem('gh_repo') || '';
+        }
+
+        function submitWish() {
+            const input = document.getElementById('wish-input');
+            const content = input.value.trim();
+            if (!content) return showToast('⚠️ 心法内容不能为空');
+
+            const newWish = {
+                id: Date.now(),
+                content: content,
+                date: new Date().toLocaleString('zh-CN', { hour12: false })
+            };
+
+            wishes.push(newWish);
+            saveToLocal();
+            
+            input.value = '';
+            showToast('✨ 能量已注入宇宙');
+            if(localStorage.getItem('gh_token')) syncToGithub(true);
+        }
+
+        function saveToLocal() {
+            localStorage.setItem('mindset_wishes', JSON.stringify(wishes));
+        }
+
+        function openHistory() {
+            const view = document.getElementById('history-view');
+            const container = document.getElementById('bubbles-container');
+            container.innerHTML = ''; 
+
+            if (wishes.length === 0) return showToast("📭 还没有记录哦");
+
+            const timestamps = wishes.map(w => w.id);
+            const maxTime = Math.max(...timestamps);
+            const minTime = Math.min(...timestamps);
+            const timeSpan = maxTime - minTime;
+
+            wishes.forEach(wish => {
+                const bubble = document.createElement('div');
+                bubble.className = 'wish-bubble';
+                
+                let freshness = timeSpan === 0 ? 1 : (wish.id - minTime) / timeSpan;
+                let size = 30 + (freshness * 100);
+                let zIndex = Math.floor(freshness * 90) + 10;
+                let blur = (1 - freshness) * 2; 
+
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                bubble.style.zIndex = zIndex;
+                bubble.style.filter = `blur(${blur}px)`;
+                bubble.style.left = Math.random() * 85 + 5 + '%';
+                bubble.style.top = Math.random() * 85 + 10 + '%';
+
+                const randomColor = BUBBLE_COLORS[Math.floor(Math.random() * BUBBLE_COLORS.length)];
+                bubble.style.background = randomColor;
+                bubble.style.animationDuration = (Math.random() * 4 + 4) + 's';
+
+                bubble.onclick = () => {
+                    currentWishId = wish.id;
+                    document.getElementById('modal-date').innerText = wish.date;
+                    document.getElementById('modal-content').innerText = wish.content;
+                    document.getElementById('detail-modal').style.display = 'block';
+                };
+                
+                container.appendChild(bubble);
+            });
+
+            view.style.display = 'block';
+            setTimeout(() => view.style.opacity = '1', 10);
+        }
+
+        // --- 新的删除逻辑 ---
+        
+        // 1. 弹出确认框 (不使用 window.confirm)
+        function askToDelete() {
+            // 这里我们保持详情页不关，直接在上面盖一层确认框
+            document.getElementById('delete-confirm-modal').style.display = 'block';
+        }
+
+        // 2. 关闭确认框
+        function closeDeleteConfirm() {
+            document.getElementById('delete-confirm-modal').style.display = 'none';
+        }
+
+        // 3. 执行真实删除
+        function executeDelete() {
+            if (!currentWishId) return;
+
+            // 移除数据
+            wishes = wishes.filter(w => w.id !== currentWishId);
+            saveToLocal();
+            
+            // 关闭所有弹窗
+            closeDeleteConfirm();
+            closeModal(); 
+            
+            // 刷新界面
+            showToast('🗑️ 心念已清理');
+            if (wishes.length > 0) {
+                openHistory();
+            } else {
+                document.getElementById('bubbles-container').innerHTML = '';
+            }
+
+            // 同步云端
+            if(localStorage.getItem('gh_token')) {
+                syncToGithub(true);
+            }
+        }
+
+        function closeHistory() {
+            const view = document.getElementById('history-view');
+            view.style.opacity = '0';
+            setTimeout(() => view.style.display = 'none', 500);
+            closeModal();
+            closeDeleteConfirm();
+        }
+
+        function closeModal() {
+            document.getElementById('detail-modal').style.display = 'none';
+            currentWishId = null;
+        }
+
+        function toggleSettings() {
+            const panel = document.getElementById('settings-panel');
+            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+            if(panel.style.display === 'flex') loadSettings();
+        }
+
+        function saveSettings() {
+            const token = document.getElementById('gh-token').value.trim();
+            const user = document.getElementById('gh-username').value.trim();
+            const repo = document.getElementById('gh-repo').value.trim();
+            localStorage.setItem('gh_token', token);
+            localStorage.setItem('gh_username', user);
+            localStorage.setItem('gh_repo', repo);
+            toggleSettings();
+            showToast('✅ 配置已保存');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.opacity = '1';
+            setTimeout(() => t.style.opacity = '0', 2500);
+        }
+
+        // GitHub API Helpers
+        function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
+        function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
+
+        async function syncToGithub(silent = false) {
+            const token = localStorage.getItem('gh_token');
+            const user = localStorage.getItem('gh_username');
+            const repo = localStorage.getItem('gh_repo');
+            if (!token) { if(!silent) showToast('⚠️ 请先配置设置'); return; }
+            if(!silent) showToast('☁️ 正在同步...');
+            try {
+                const url = `https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`;
+                let sha = null;
+                try {
+                    const getRes = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
+                    if (getRes.ok) { const d = await getRes.json(); sha = d.sha; }
+                } catch(e){}
+
+                const body = {
+                    message: "update wishes",
+                    content: utf8_to_b64(JSON.stringify(wishes, null, 2))
+                };
+                if (sha) body.sha = sha;
+
+                const res = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                if (res.ok && !silent) showToast('✅ 云端同步成功');
+            } catch (e) { if(!silent) showToast('❌ 保存失败'); }
+        }
+
+        async function syncFromGithub() {
+            const token = localStorage.getItem('gh_token');
+            const user = localStorage.getItem('gh_username');
+            const repo = localStorage.getItem('gh_repo');
+            if (!token) return showToast('⚠️ 请先配置设置');
+            showToast('🔄 正在同步...');
+            try {
+                const url = `https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`;
+                const res = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
+                if (res.ok) {
+                    const data = await res.json();
+                    wishes = JSON.parse(b64_to_utf8(data.content));
+                    saveToLocal();
+                    showToast('✅ 数据已恢复');
+                } else { showToast('ℹ️ 云端暂无数据'); }
+            } catch (e) { showToast('❌ 同步失败'); }
+        }
+
+        function initBg() {
+            const bg = document.getElementById('bubbles-bg');
+            for(let i=0; i<12; i++) {
+                let b = document.createElement('div');
+                b.className = 'bubble-bg';
+                let size = Math.random() * 80 + 30 + 'px';
+                b.style.width = size; b.style.height = size;
+                b.style.left = Math.random() * 100 + '%';
+                b.style.animationDuration = Math.random() * 15 + 10 + 's';
+                b.style.animationDelay = Math.random() * 5 + 's';
+                bg.appendChild(b);
+            }
+        }
+        initBg();
+    </script>
+</body>
+</html>
