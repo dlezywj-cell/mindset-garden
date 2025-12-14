@@ -101,7 +101,7 @@
             outline: none;
             resize: none;
             box-sizing: border-box;
-            margin-bottom: 20px;
+            margin-bottom: 25px; /* 增加一点底部间距 */
             transition: all 0.3s;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
         }
@@ -112,15 +112,18 @@
             border-color: #a1c4fd;
         }
 
+        /* --- 核心修改：按钮组改为垂直排列 --- */
         .btn-group {
             display: flex;
-            gap: 15px;
+            flex-direction: column; /* 垂直排列 */
+            gap: 15px; /* 按钮之间的间距 */
+            width: 100%;
             justify-content: center;
         }
 
         button {
             border: none;
-            padding: 12px 25px;
+            padding: 14px 25px; /* 稍微增加高度，更有质感 */
             border-radius: 50px;
             cursor: pointer;
             font-size: 1rem;
@@ -128,24 +131,24 @@
             color: white;
             font-weight: 500;
             letter-spacing: 1px;
+            width: 100%; /* 按钮占满全宽 */
         }
 
         .btn-primary {
             background: var(--btn-gradient);
             box-shadow: 0 4px 15px rgba(161, 196, 253, 0.5);
-            flex: 2;
         }
 
         .btn-secondary {
             background: rgba(255,255,255,0.8);
             color: #7c9ae6;
             border: 1px solid #fff;
-            flex: 1;
         }
 
         button:active {
-            transform: scale(0.96);
+            transform: scale(0.98);
         }
+        /* ---------------------------------- */
 
         /* 设置图标 */
         .settings-icon {
@@ -213,6 +216,7 @@
             border-radius: 20px;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255,255,255,0.5);
+            width: auto; /* 顶部导航按钮保持自适应 */
         }
 
         /* 愿望气泡 */
@@ -304,6 +308,7 @@
             background: #ff6b6b;
             color: white;
             box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+            width: auto;
         }
 
         .toast {
@@ -359,12 +364,13 @@
 
             <textarea id="wish-input" placeholder="写下你的心法...&#10;最新的念头会最清晰，过去的念头将化作背景。"></textarea>
             
+            <!-- 按钮区域 -->
             <div class="btn-group">
                 <button class="btn-primary" onclick="submitWish()">🌟 注入能量</button>
                 <button class="btn-secondary" onclick="openHistory()">🔮 时光回溯</button>
             </div>
             
-            <div style="margin-top: 20px;">
+            <div style="margin-top: 25px;">
                  <span onclick="syncFromGithub()" style="font-size: 0.8rem; color:#aaa; cursor:pointer; text-decoration:underline;">🔄 从 GitHub 恢复数据</span>
             </div>
         </div>
@@ -384,17 +390,17 @@
             <p style="font-size:1.1rem; line-height:1.8; color:#444; text-align:justify;" id="modal-content"></p>
             
             <div class="modal-btn-group">
-                <button class="nav-btn modal-delete-btn" onclick="askToDelete()">🗑️ 删除</button>
-                <button class="nav-btn modal-close-btn" onclick="closeModal()">收起</button>
+                <button class="nav-btn modal-delete-btn" style="width:auto;" onclick="askToDelete()">🗑️ 删除</button>
+                <button class="nav-btn modal-close-btn" style="width:auto;" onclick="closeModal()">收起</button>
             </div>
         </div>
 
-        <!-- 删除确认弹窗 (新增) -->
+        <!-- 删除确认弹窗 -->
         <div class="modal" id="delete-confirm-modal">
             <h3 style="margin-top:0; color:#555;">确认清理？</h3>
             <p style="color:#666; font-size:0.95rem; line-height:1.5;">这条心法将随风而去，<br>云端记录也将同步移除。</p>
             <div class="modal-btn-group">
-                <button class="nav-btn" style="border:1px solid #ddd;" onclick="closeDeleteConfirm()">取消</button>
+                <button class="nav-btn" style="border:1px solid #ddd; width:auto;" onclick="closeDeleteConfirm()">取消</button>
                 <button class="nav-btn btn-confirm-delete" onclick="executeDelete()">确认删除</button>
             </div>
         </div>
@@ -490,32 +496,23 @@
             setTimeout(() => view.style.opacity = '1', 10);
         }
 
-        // --- 新的删除逻辑 ---
-        
-        // 1. 弹出确认框 (不使用 window.confirm)
         function askToDelete() {
-            // 这里我们保持详情页不关，直接在上面盖一层确认框
             document.getElementById('delete-confirm-modal').style.display = 'block';
         }
 
-        // 2. 关闭确认框
         function closeDeleteConfirm() {
             document.getElementById('delete-confirm-modal').style.display = 'none';
         }
 
-        // 3. 执行真实删除
         function executeDelete() {
             if (!currentWishId) return;
 
-            // 移除数据
             wishes = wishes.filter(w => w.id !== currentWishId);
             saveToLocal();
             
-            // 关闭所有弹窗
             closeDeleteConfirm();
             closeModal(); 
             
-            // 刷新界面
             showToast('🗑️ 心念已清理');
             if (wishes.length > 0) {
                 openHistory();
@@ -523,7 +520,6 @@
                 document.getElementById('bubbles-container').innerHTML = '';
             }
 
-            // 同步云端
             if(localStorage.getItem('gh_token')) {
                 syncToGithub(true);
             }
@@ -566,7 +562,6 @@
             setTimeout(() => t.style.opacity = '0', 2500);
         }
 
-        // GitHub API Helpers
         function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
         function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
 
