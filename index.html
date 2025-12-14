@@ -89,6 +89,24 @@
             margin-bottom: 25px;
         }
 
+        /* 状态指示灯 */
+        .status-indicator {
+            font-size: 0.75rem;
+            margin-bottom: 15px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            opacity: 0.7;
+        }
+        .dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #ccc;
+            transition: background 0.3s;
+        }
+        .status-text { color: #888; }
+
         textarea {
             width: 100%;
             height: 150px;
@@ -101,7 +119,7 @@
             outline: none;
             resize: none;
             box-sizing: border-box;
-            margin-bottom: 25px; /* 增加一点底部间距 */
+            margin-bottom: 25px;
             transition: all 0.3s;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
         }
@@ -112,18 +130,18 @@
             border-color: #a1c4fd;
         }
 
-        /* --- 核心修改：按钮组改为垂直排列 --- */
+        /* 垂直按钮组 */
         .btn-group {
             display: flex;
-            flex-direction: column; /* 垂直排列 */
-            gap: 15px; /* 按钮之间的间距 */
+            flex-direction: column;
+            gap: 15px;
             width: 100%;
             justify-content: center;
         }
 
         button {
             border: none;
-            padding: 14px 25px; /* 稍微增加高度，更有质感 */
+            padding: 14px 25px;
             border-radius: 50px;
             cursor: pointer;
             font-size: 1rem;
@@ -131,7 +149,7 @@
             color: white;
             font-weight: 500;
             letter-spacing: 1px;
-            width: 100%; /* 按钮占满全宽 */
+            width: 100%;
         }
 
         .btn-primary {
@@ -145,10 +163,8 @@
             border: 1px solid #fff;
         }
 
-        button:active {
-            transform: scale(0.98);
-        }
-        /* ---------------------------------- */
+        button:active { transform: scale(0.98); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
 
         /* 设置图标 */
         .settings-icon {
@@ -216,7 +232,7 @@
             border-radius: 20px;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255,255,255,0.5);
-            width: auto; /* 顶部导航按钮保持自适应 */
+            width: auto;
         }
 
         /* 愿望气泡 */
@@ -234,18 +250,6 @@
             border: 1px solid rgba(255,255,255,0.3);
         }
         
-        .wish-bubble::after {
-            content: '';
-            position: absolute;
-            top: 20%;
-            left: 20%;
-            width: 25%;
-            height: 12%;
-            background: rgba(255,255,255,0.8);
-            border-radius: 50%;
-            transform: rotate(-45deg);
-        }
-        
         .wish-bubble:hover {
             transform: scale(1.1) !important;
             z-index: 1000 !important;
@@ -258,7 +262,7 @@
             50% { transform: translateY(-5px); }
         }
 
-        /* 通用弹窗样式 */
+        /* 通用弹窗 */
         .modal {
             position: fixed;
             top: 50%; left: 50%;
@@ -276,10 +280,7 @@
             border: 1px solid rgba(255,255,255,1);
         }
 
-        /* 详情弹窗 (层级 2000) */
         #detail-modal { z-index: 2000; }
-
-        /* 删除确认弹窗 (层级 3000 - 必须更高) */
         #delete-confirm-modal { z-index: 3000; }
         
         .modal-btn-group {
@@ -289,47 +290,26 @@
             justify-content: center;
         }
         
-        .modal-close-btn {
-            background: #f0f2f5;
-            color: #555;
-            border: none;
-            flex: 2;
-        }
-
-        .modal-delete-btn {
-            background: var(--danger-bg);
-            border: 1px solid var(--danger-text);
-            color: var(--danger-text);
-            flex: 1;
-        }
-        
-        /* 删除弹窗里的红色确认按钮 */
-        .btn-confirm-delete {
-            background: #ff6b6b;
-            color: white;
-            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
-            width: auto;
-        }
+        .modal-close-btn { background: #f0f2f5; color: #555; border: none; flex: 2; }
+        .modal-delete-btn { background: var(--danger-bg); border: 1px solid var(--danger-text); color: var(--danger-text); flex: 1; }
+        .btn-confirm-delete { background: #ff6b6b; color: white; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3); width: auto; }
 
         .toast {
             position: fixed;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 30px; left: 50%; transform: translateX(-50%);
             background: rgba(255,255,255,0.95);
             color: #555;
             padding: 12px 30px;
             border-radius: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
             z-index: 4000;
             font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
+            display: flex; align-items: center; gap: 8px; font-weight: 500;
+            width: max-content;
+            max-width: 90%;
         }
 
         @media (max-width: 600px) {
@@ -350,28 +330,29 @@
             <h1>Mindset Garden</h1>
             <div class="subtitle">心诚则灵 · 时光长河</div>
             
-            <div id="settings-panel">
-                <h3 style="color:#7c9ae6">☁️ 备份设置</h3>
-                <p style="font-size:0.8rem; color:#999; margin-bottom:15px">配置 GitHub Token 以启用云同步</p>
-                <input type="text" id="gh-token" class="settings-input" placeholder="GitHub Personal Access Token">
-                <input type="text" id="gh-username" class="settings-input" placeholder="GitHub 用户名">
-                <input type="text" id="gh-repo" class="settings-input" placeholder="仓库名 (如: mindset-well)">
-                <div style="margin-top:20px; width:80%; display:flex; gap:10px;">
-                    <button class="btn-primary" onclick="saveSettings()">保存</button>
-                    <button class="btn-secondary" onclick="toggleSettings()">返回</button>
-                </div>
+            <div class="status-indicator">
+                <div class="dot" id="sync-dot"></div>
+                <span class="status-text" id="sync-text">准备就绪</span>
             </div>
 
-            <textarea id="wish-input" placeholder="写下你的心法...&#10;最新的念头会最清晰，过去的念头将化作背景。"></textarea>
-            
-            <!-- 按钮区域 -->
-            <div class="btn-group">
-                <button class="btn-primary" onclick="submitWish()">🌟 注入能量</button>
-                <button class="btn-secondary" onclick="openHistory()">🔮 时光回溯</button>
+            <div id="settings-panel">
+                <h3 style="color:#7c9ae6">☁️ 自动同步设置</h3>
+                <p style="font-size:0.8rem; color:#999; margin-bottom:15px">配置后，打开页面自动拉取，操作自动保存</p>
+                <input type="text" id="gh-token" class="settings-input" placeholder="GitHub Token (ghp_...)">
+                <input type="text" id="gh-username" class="settings-input" placeholder="GitHub 用户名 (如: zhangsan)">
+                <input type="text" id="gh-repo" class="settings-input" placeholder="仓库名 (如: my-secret-mindset)">
+                <div style="margin-top:20px; width:80%; display:flex; gap:10px;">
+                    <button class="btn-primary" onclick="saveSettings()">保存配置</button>
+                    <button class="btn-secondary" onclick="toggleSettings()">返回</button>
+                </div>
+                <p style="font-size:0.75rem; color:#ff6b6b; margin-top:20px; display:none;" id="config-error"></p>
             </div>
+
+            <textarea id="wish-input" placeholder="写下你的心法...&#10;知行合一，此刻即是未来。"></textarea>
             
-            <div style="margin-top: 25px;">
-                 <span onclick="syncFromGithub()" style="font-size: 0.8rem; color:#aaa; cursor:pointer; text-decoration:underline;">🔄 从 GitHub 恢复数据</span>
+            <div class="btn-group">
+                <button class="btn-primary" id="btn-submit" onclick="submitWish()">🌟 注入能量</button>
+                <button class="btn-secondary" onclick="openHistory()">🔮 时光回溯</button>
             </div>
         </div>
     </div>
@@ -380,22 +361,20 @@
     <div id="history-view">
         <div class="history-controls">
             <button class="nav-btn" onclick="closeHistory()">← 返回花园</button>
-            <button class="nav-btn" onclick="syncToGithub()">☁️ 云端保存</button>
+            <!-- 自动同步模式下，隐藏手动保存按钮，或者仅显示状态 -->
+            <span style="font-size:0.8rem; color:#888; align-self:center;">☁️ 自动同步中</span>
         </div>
         <div id="bubbles-container"></div>
         
-        <!-- 详情弹窗 -->
         <div class="modal" id="detail-modal">
             <p style="font-size:0.85rem; color:#999; margin-bottom:15px;" id="modal-date"></p>
             <p style="font-size:1.1rem; line-height:1.8; color:#444; text-align:justify;" id="modal-content"></p>
-            
             <div class="modal-btn-group">
                 <button class="nav-btn modal-delete-btn" style="width:auto;" onclick="askToDelete()">🗑️ 删除</button>
                 <button class="nav-btn modal-close-btn" style="width:auto;" onclick="closeModal()">收起</button>
             </div>
         </div>
 
-        <!-- 删除确认弹窗 -->
         <div class="modal" id="delete-confirm-modal">
             <h3 style="margin-top:0; color:#555;">确认清理？</h3>
             <p style="color:#666; font-size:0.95rem; line-height:1.5;">这条心法将随风而去，<br>云端记录也将同步移除。</p>
@@ -411,26 +390,38 @@
         let wishes = JSON.parse(localStorage.getItem('mindset_wishes')) || [];
         let currentWishId = null; 
 
-        const BUBBLE_COLORS = [
-            'rgba(255, 183, 178, 0.9)', 
-            'rgba(255, 223, 186, 0.9)', 
-            'rgba(255, 255, 186, 0.9)', 
-            'rgba(186, 255, 201, 0.9)', 
-            'rgba(186, 225, 255, 0.9)', 
-            'rgba(226, 194, 255, 0.9)', 
-            'rgba(255, 218, 233, 0.9)'  
-        ];
+        // 配色
+        const BUBBLE_COLORS = ['rgba(255, 183, 178, 0.9)', 'rgba(255, 223, 186, 0.9)', 'rgba(255, 255, 186, 0.9)', 'rgba(186, 255, 201, 0.9)', 'rgba(186, 225, 255, 0.9)', 'rgba(226, 194, 255, 0.9)', 'rgba(255, 218, 233, 0.9)'];
 
-        function loadSettings() {
-            document.getElementById('gh-token').value = localStorage.getItem('gh_token') || '';
-            document.getElementById('gh-username').value = localStorage.getItem('gh_username') || '';
-            document.getElementById('gh-repo').value = localStorage.getItem('gh_repo') || '';
+        // --- 1. 初始化 & 自动同步逻辑 ---
+        
+        window.onload = function() {
+            loadSettings();
+            initBg();
+            
+            // 检查是否有配置，有则自动拉取
+            if (isConfigured()) {
+                autoSyncFromCloud();
+            } else {
+                updateStatus('local', '未配置云同步，仅本地存储');
+            }
+        };
+
+        function isConfigured() {
+            return localStorage.getItem('gh_token') && localStorage.getItem('gh_username') && localStorage.getItem('gh_repo');
         }
 
-        function submitWish() {
+        // --- 2. 核心操作 ---
+
+        async function submitWish() {
             const input = document.getElementById('wish-input');
             const content = input.value.trim();
             if (!content) return showToast('⚠️ 心法内容不能为空');
+
+            // 锁定按钮防止重复提交
+            const btn = document.getElementById('btn-submit');
+            btn.disabled = true;
+            btn.innerText = "⏳ 正在同步...";
 
             const newWish = {
                 id: Date.now(),
@@ -441,20 +432,225 @@
             wishes.push(newWish);
             saveToLocal();
             
+            // 尝试云端同步
+            if (isConfigured()) {
+                const success = await syncToGithub();
+                if (success) {
+                    showToast('✅ 已保存并同步到云端');
+                } else {
+                    showToast('⚠️ 已存本地，但云端同步失败');
+                }
+            } else {
+                showToast('✅ 已保存到本地 (未配置云端)');
+            }
+
             input.value = '';
-            showToast('✨ 能量已注入宇宙');
-            if(localStorage.getItem('gh_token')) syncToGithub(true);
+            btn.disabled = false;
+            btn.innerText = "🌟 注入能量";
+        }
+
+        async function executeDelete() {
+            if (!currentWishId) return;
+
+            wishes = wishes.filter(w => w.id !== currentWishId);
+            saveToLocal();
+            closeDeleteConfirm();
+            closeModal();
+            
+            // 刷新历史视图
+            if (wishes.length > 0) openHistory();
+            else document.getElementById('bubbles-container').innerHTML = '';
+
+            // 自动同步
+            if (isConfigured()) {
+                showToast('🗑️ 正在删除云端备份...');
+                const success = await syncToGithub();
+                if (success) showToast('✅ 云端已同步清理');
+                else showToast('⚠️ 本地已删，云端同步失败');
+            } else {
+                showToast('🗑️ 本地已清理');
+            }
+        }
+
+        // --- 3. GitHub 同步引擎 (核心修复) ---
+
+        // 自动拉取
+        async function autoSyncFromCloud() {
+            updateStatus('loading', '正在从云端拉取数据...');
+            try {
+                const data = await fetchGithubFile();
+                if (data) {
+                    wishes = data;
+                    saveToLocal();
+                    updateStatus('success', '云端数据已同步');
+                } else {
+                    // 文件不存在（可能是新仓库），保持本地数据
+                    updateStatus('success', '云端就绪 (新仓库)');
+                }
+            } catch (error) {
+                console.error(error);
+                updateStatus('error', '云端同步失败: ' + error.message);
+            }
+        }
+
+        // 上传/覆盖 (核心修复版)
+        async function syncToGithub() {
+            const token = localStorage.getItem('gh_token');
+            const user = localStorage.getItem('gh_username').trim(); // 去空格
+            let repo = localStorage.getItem('gh_repo').trim(); // 去空格
+            
+            // 智能纠错：如果用户填了 user/repo，去掉 user/
+            if(repo.includes('/')) {
+                repo = repo.split('/').pop();
+            }
+
+            const url = `https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`;
+            
+            try {
+                // 1. 获取现有文件的 SHA (为了覆盖)
+                let sha = null;
+                const getRes = await fetch(url, {
+                    headers: { 
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (getRes.ok) {
+                    const getData = await getRes.json();
+                    sha = getData.sha;
+                } else if (getRes.status === 404) {
+                    // 文件不存在，正常，我们即将创建
+                } else if (getRes.status === 401) {
+                    throw new Error("Token 无效或过期");
+                } else if (getRes.status === 403) {
+                    throw new Error("Token 权限不足 (需勾选 repo)");
+                } else {
+                    throw new Error(`连接错误 (${getRes.status})`);
+                }
+
+                // 2. 上传数据
+                const contentBase64 = utf8_to_b64(JSON.stringify(wishes, null, 2));
+                const body = {
+                    message: "update wishes from mindset garden",
+                    content: contentBase64
+                };
+                if (sha) body.sha = sha;
+
+                const putRes = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (!putRes.ok) throw new Error("保存失败");
+                return true;
+
+            } catch (e) {
+                console.error("Sync Error:", e);
+                // 弹窗提示具体错误，帮助用户修复
+                alert(`⚠️ 保存失败：${e.message}\n请检查设置中的用户名、仓库名和 Token 是否正确。`);
+                return false;
+            }
+        }
+
+        // 获取文件
+        async function fetchGithubFile() {
+            const token = localStorage.getItem('gh_token');
+            const user = localStorage.getItem('gh_username').trim();
+            let repo = localStorage.getItem('gh_repo').trim();
+            if(repo.includes('/')) repo = repo.split('/').pop();
+
+            const url = `https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`;
+            
+            const res = await fetch(url, {
+                headers: { 
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (res.status === 404) return null; // 文件不存在
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            const data = await res.json();
+            return JSON.parse(b64_to_utf8(data.content));
+        }
+
+        // --- 4. 辅助功能 ---
+
+        function updateStatus(type, msg) {
+            const dot = document.getElementById('sync-dot');
+            const text = document.getElementById('sync-text');
+            text.innerText = msg;
+            
+            if (type === 'loading') {
+                dot.style.background = '#ffd700'; // 黄色
+            } else if (type === 'success') {
+                dot.style.background = '#4cd964'; // 绿色
+            } else if (type === 'error') {
+                dot.style.background = '#ff6b6b'; // 红色
+            } else {
+                dot.style.background = '#ccc'; // 灰色
+            }
         }
 
         function saveToLocal() {
             localStorage.setItem('mindset_wishes', JSON.stringify(wishes));
         }
 
+        // Base64 处理中文
+        function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
+        function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
+
+        function loadSettings() {
+            document.getElementById('gh-token').value = localStorage.getItem('gh_token') || '';
+            document.getElementById('gh-username').value = localStorage.getItem('gh_username') || '';
+            document.getElementById('gh-repo').value = localStorage.getItem('gh_repo') || '';
+        }
+
+        function saveSettings() {
+            const token = document.getElementById('gh-token').value.trim();
+            const user = document.getElementById('gh-username').value.trim();
+            const repo = document.getElementById('gh-repo').value.trim();
+            
+            localStorage.setItem('gh_token', token);
+            localStorage.setItem('gh_username', user);
+            localStorage.setItem('gh_repo', repo);
+            
+            toggleSettings();
+            showToast('✅ 配置已保存，尝试同步...');
+            autoSyncFromCloud(); // 保存后立即尝试同步
+        }
+
+        // --- UI逻辑 (保持不变) ---
+        function toggleSettings() {
+            const panel = document.getElementById('settings-panel');
+            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+        }
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.opacity = '1';
+            setTimeout(() => t.style.opacity = '0', 2500);
+        }
+        function askToDelete() { document.getElementById('delete-confirm-modal').style.display = 'block'; }
+        function closeDeleteConfirm() { document.getElementById('delete-confirm-modal').style.display = 'none'; }
+        function closeModal() { document.getElementById('detail-modal').style.display = 'none'; currentWishId = null; }
+        function closeHistory() {
+            const view = document.getElementById('history-view');
+            view.style.opacity = '0';
+            setTimeout(() => view.style.display = 'none', 500);
+            closeModal(); closeDeleteConfirm();
+        }
+        
         function openHistory() {
             const view = document.getElementById('history-view');
             const container = document.getElementById('bubbles-container');
             container.innerHTML = ''; 
-
             if (wishes.length === 0) return showToast("📭 还没有记录哦");
 
             const timestamps = wishes.map(w => w.id);
@@ -465,7 +661,6 @@
             wishes.forEach(wish => {
                 const bubble = document.createElement('div');
                 bubble.className = 'wish-bubble';
-                
                 let freshness = timeSpan === 0 ? 1 : (wish.id - minTime) / timeSpan;
                 let size = 30 + (freshness * 100);
                 let zIndex = Math.floor(freshness * 90) + 10;
@@ -477,9 +672,7 @@
                 bubble.style.filter = `blur(${blur}px)`;
                 bubble.style.left = Math.random() * 85 + 5 + '%';
                 bubble.style.top = Math.random() * 85 + 10 + '%';
-
-                const randomColor = BUBBLE_COLORS[Math.floor(Math.random() * BUBBLE_COLORS.length)];
-                bubble.style.background = randomColor;
+                bubble.style.background = BUBBLE_COLORS[Math.floor(Math.random() * BUBBLE_COLORS.length)];
                 bubble.style.animationDuration = (Math.random() * 4 + 4) + 's';
 
                 bubble.onclick = () => {
@@ -488,128 +681,10 @@
                     document.getElementById('modal-content').innerText = wish.content;
                     document.getElementById('detail-modal').style.display = 'block';
                 };
-                
                 container.appendChild(bubble);
             });
-
             view.style.display = 'block';
             setTimeout(() => view.style.opacity = '1', 10);
-        }
-
-        function askToDelete() {
-            document.getElementById('delete-confirm-modal').style.display = 'block';
-        }
-
-        function closeDeleteConfirm() {
-            document.getElementById('delete-confirm-modal').style.display = 'none';
-        }
-
-        function executeDelete() {
-            if (!currentWishId) return;
-
-            wishes = wishes.filter(w => w.id !== currentWishId);
-            saveToLocal();
-            
-            closeDeleteConfirm();
-            closeModal(); 
-            
-            showToast('🗑️ 心念已清理');
-            if (wishes.length > 0) {
-                openHistory();
-            } else {
-                document.getElementById('bubbles-container').innerHTML = '';
-            }
-
-            if(localStorage.getItem('gh_token')) {
-                syncToGithub(true);
-            }
-        }
-
-        function closeHistory() {
-            const view = document.getElementById('history-view');
-            view.style.opacity = '0';
-            setTimeout(() => view.style.display = 'none', 500);
-            closeModal();
-            closeDeleteConfirm();
-        }
-
-        function closeModal() {
-            document.getElementById('detail-modal').style.display = 'none';
-            currentWishId = null;
-        }
-
-        function toggleSettings() {
-            const panel = document.getElementById('settings-panel');
-            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
-            if(panel.style.display === 'flex') loadSettings();
-        }
-
-        function saveSettings() {
-            const token = document.getElementById('gh-token').value.trim();
-            const user = document.getElementById('gh-username').value.trim();
-            const repo = document.getElementById('gh-repo').value.trim();
-            localStorage.setItem('gh_token', token);
-            localStorage.setItem('gh_username', user);
-            localStorage.setItem('gh_repo', repo);
-            toggleSettings();
-            showToast('✅ 配置已保存');
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.style.opacity = '1';
-            setTimeout(() => t.style.opacity = '0', 2500);
-        }
-
-        function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
-        function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
-
-        async function syncToGithub(silent = false) {
-            const token = localStorage.getItem('gh_token');
-            const user = localStorage.getItem('gh_username');
-            const repo = localStorage.getItem('gh_repo');
-            if (!token) { if(!silent) showToast('⚠️ 请先配置设置'); return; }
-            if(!silent) showToast('☁️ 正在同步...');
-            try {
-                const url = `https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`;
-                let sha = null;
-                try {
-                    const getRes = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
-                    if (getRes.ok) { const d = await getRes.json(); sha = d.sha; }
-                } catch(e){}
-
-                const body = {
-                    message: "update wishes",
-                    content: utf8_to_b64(JSON.stringify(wishes, null, 2))
-                };
-                if (sha) body.sha = sha;
-
-                const res = await fetch(url, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-                if (res.ok && !silent) showToast('✅ 云端同步成功');
-            } catch (e) { if(!silent) showToast('❌ 保存失败'); }
-        }
-
-        async function syncFromGithub() {
-            const token = localStorage.getItem('gh_token');
-            const user = localStorage.getItem('gh_username');
-            const repo = localStorage.getItem('gh_repo');
-            if (!token) return showToast('⚠️ 请先配置设置');
-            showToast('🔄 正在同步...');
-            try {
-                const url = `https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`;
-                const res = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
-                if (res.ok) {
-                    const data = await res.json();
-                    wishes = JSON.parse(b64_to_utf8(data.content));
-                    saveToLocal();
-                    showToast('✅ 数据已恢复');
-                } else { showToast('ℹ️ 云端暂无数据'); }
-            } catch (e) { showToast('❌ 同步失败'); }
         }
 
         function initBg() {
@@ -625,7 +700,6 @@
                 bg.appendChild(b);
             }
         }
-        initBg();
     </script>
 </body>
 </html>
