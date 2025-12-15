@@ -22,10 +22,12 @@
             margin: 0;
             padding: 0;
             height: 100%;
+            width: 100%;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
             color: var(--text-main);
-            overflow: hidden;
+            overflow: hidden; /* 禁止原生滚动 */
+            touch-action: none; /* 禁止原生触摸手势 */
         }
 
         /* 漂浮的背景装饰 */
@@ -35,6 +37,7 @@
             border-radius: 50%;
             z-index: -1;
             animation: float 20s infinite linear;
+            pointer-events: none;
         }
 
         @keyframes float {
@@ -54,7 +57,7 @@
             box-sizing: border-box;
             position: relative;
             z-index: 10;
-            transition: all 0.5s ease;
+            transition: opacity 0.5s ease;
         }
 
         /* 磨砂玻璃卡片 */
@@ -89,7 +92,6 @@
             margin-bottom: 25px;
         }
 
-        /* 状态指示灯 */
         .status-indicator {
             font-size: 0.75rem;
             margin-bottom: 15px;
@@ -105,7 +107,6 @@
             background: #ccc;
             transition: background 0.3s;
         }
-        .status-text { color: #888; }
 
         textarea {
             width: 100%;
@@ -130,7 +131,6 @@
             border-color: #a1c4fd;
         }
 
-        /* 垂直按钮组 */
         .btn-group {
             display: flex;
             flex-direction: column;
@@ -166,43 +166,23 @@
         button:active { transform: scale(0.98); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        /* 设置图标 */
         .settings-icon {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            cursor: pointer;
-            opacity: 0.5;
-            font-size: 1.2rem;
-            transition: opacity 0.3s;
-            color: #7c9ae6;
+            position: absolute; top: 20px; right: 20px;
+            cursor: pointer; opacity: 0.5; font-size: 1.2rem;
+            transition: opacity 0.3s; color: #7c9ae6;
         }
-        .settings-icon:hover { opacity: 1; }
 
-        /* 设置面板 */
         #settings-panel {
-            display: none;
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.98);
-            z-index: 20;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-radius: 24px;
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.98); z-index: 20;
+            flex-direction: column; justify-content: center; align-items: center; border-radius: 24px;
         }
-
         .settings-input {
-            width: 80%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #eee;
-            background: #f9f9f9;
-            border-radius: 12px;
-            font-size: 0.9rem;
+            width: 80%; padding: 12px; margin: 10px 0;
+            border: 1px solid #eee; background: #f9f9f9; border-radius: 12px; font-size: 0.9rem;
         }
 
-        /* 历史星空视图 */
+        /* --- 历史星空视图 (升级版) --- */
         #history-view {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -211,28 +191,38 @@
             display: none;
             opacity: 0;
             transition: opacity 0.5s;
-            perspective: 1000px;
+            overflow: hidden; /* 隐藏溢出 */
+            cursor: grab; /* 提示可拖拽 */
         }
+        
+        #history-view:active { cursor: grabbing; }
 
         .history-controls {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            display: flex;
-            justify-content: space-between;
-            z-index: 60;
+            top: 20px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between;
+            z-index: 60; /* 确保在泡泡之上 */
+            pointer-events: none; /* 让点击穿透，只响应按钮 */
+        }
+        
+        .history-controls button, .history-controls span {
+            pointer-events: auto; /* 恢复按钮点击 */
         }
 
         .nav-btn {
-            background: rgba(255,255,255,0.5);
-            color: #666;
-            padding: 8px 15px;
-            font-size: 0.9rem;
-            border-radius: 20px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.5);
-            width: auto;
+            background: rgba(255,255,255,0.5); color: #666;
+            padding: 8px 15px; font-size: 0.9rem; border-radius: 20px;
+            backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.5); width: auto;
+        }
+
+        /* 宇宙容器：用于承载泡泡并进行缩放平移 */
+        #universe-stage {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            transform-origin: 0 0; /* 从左上角变换，便于计算 */
+            /* 3D透视效果 */
+            perspective: 1000px;
+            transform-style: preserve-3d;
         }
 
         /* 愿望气泡 */
@@ -240,76 +230,57 @@
             position: absolute;
             border-radius: 50%;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             color: transparent; 
-            transition: transform 0.3s, filter 0.3s;
-            animation: breathe 5s infinite ease-in-out;
             box-shadow: inset 0 0 10px rgba(255,255,255,0.6), 0 5px 15px rgba(0,0,0,0.05);
             border: 1px solid rgba(255,255,255,0.3);
+            /* 优化性能 */
+            will-change: transform;
+            /* 默认居中，位置由JS控制 */
+            transform: translate(-50%, -50%); 
         }
         
-        .wish-bubble:hover {
-            transform: scale(1.1) !important;
-            z-index: 1000 !important;
-            filter: blur(0px) !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        .wish-bubble::after {
+            content: ''; position: absolute; top: 20%; left: 20%; width: 25%; height: 12%;
+            background: rgba(255,255,255,0.8); border-radius: 50%; transform: rotate(-45deg);
         }
-
+        
+        /* 气泡呼吸动画 */
         @keyframes breathe {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
         }
 
-        /* 通用弹窗 */
+        /* 弹窗样式 */
         .modal {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 30px;
-            border-radius: 24px;
-            width: 80%;
-            max-width: 400px;
-            box-shadow: 0 20px 60px rgba(161, 196, 253, 0.3);
-            text-align: center;
-            display: none;
-            border: 1px solid rgba(255,255,255,1);
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
+            padding: 30px; border-radius: 24px; width: 80%; max-width: 400px;
+            box-shadow: 0 20px 60px rgba(161, 196, 253, 0.3); text-align: center;
+            display: none; border: 1px solid rgba(255,255,255,1);
         }
-
         #detail-modal { z-index: 2000; }
         #delete-confirm-modal { z-index: 3000; }
         
-        .modal-btn-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-            justify-content: center;
-        }
-        
+        .modal-btn-group { display: flex; gap: 15px; margin-top: 25px; justify-content: center; }
         .modal-close-btn { background: #f0f2f5; color: #555; border: none; flex: 2; }
         .modal-delete-btn { background: var(--danger-bg); border: 1px solid var(--danger-text); color: var(--danger-text); flex: 1; }
         .btn-confirm-delete { background: #ff6b6b; color: white; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3); width: auto; }
 
         .toast {
-            position: fixed;
-            top: 30px; left: 50%; transform: translateX(-50%);
-            background: rgba(255,255,255,0.95);
-            color: #555;
-            padding: 12px 30px;
-            border-radius: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 4000;
-            font-size: 0.95rem;
-            display: flex; align-items: center; gap: 8px; font-weight: 500;
-            width: max-content;
-            max-width: 90%;
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(255,255,255,0.95); color: #555; padding: 12px 30px;
+            border-radius: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 4000;
+            font-size: 0.95rem; display: flex; align-items: center; gap: 8px; font-weight: 500;
+            width: max-content; max-width: 90%;
+        }
+
+        /* 操作提示层 */
+        .gesture-hint {
+            position: absolute; bottom: 30px; left: 0; width: 100%;
+            text-align: center; color: #888; font-size: 0.8rem;
+            pointer-events: none; opacity: 0; transition: opacity 1s;
         }
 
         @media (max-width: 600px) {
@@ -337,15 +308,13 @@
 
             <div id="settings-panel">
                 <h3 style="color:#7c9ae6">☁️ 自动同步设置</h3>
-                <p style="font-size:0.8rem; color:#999; margin-bottom:15px">配置后，打开页面自动拉取，操作自动保存</p>
                 <input type="text" id="gh-token" class="settings-input" placeholder="GitHub Token (ghp_...)">
-                <input type="text" id="gh-username" class="settings-input" placeholder="GitHub 用户名 (如: zhangsan)">
+                <input type="text" id="gh-username" class="settings-input" placeholder="GitHub 用户名">
                 <input type="text" id="gh-repo" class="settings-input" placeholder="仓库名 (如: my-secret-mindset)">
                 <div style="margin-top:20px; width:80%; display:flex; gap:10px;">
                     <button class="btn-primary" onclick="saveSettings()">保存配置</button>
                     <button class="btn-secondary" onclick="toggleSettings()">返回</button>
                 </div>
-                <p style="font-size:0.75rem; color:#ff6b6b; margin-top:20px; display:none;" id="config-error"></p>
             </div>
 
             <textarea id="wish-input" placeholder="写下你的心法...&#10;知行合一，此刻即是未来。"></textarea>
@@ -361,11 +330,14 @@
     <div id="history-view">
         <div class="history-controls">
             <button class="nav-btn" onclick="closeHistory()">← 返回花园</button>
-            <!-- 自动同步模式下，隐藏手动保存按钮，或者仅显示状态 -->
-            <span style="font-size:0.8rem; color:#888; align-self:center;">☁️ 自动同步中</span>
+            <span style="font-size:0.8rem; color:#888; align-self:center;" id="sync-status-badge"></span>
         </div>
-        <div id="bubbles-container"></div>
         
+        <!-- 宇宙舞台 (放这里面可以整体缩放) -->
+        <div id="universe-stage"></div>
+        
+        <div class="gesture-hint" id="gesture-hint">☝️ 双指缩放 · 拖拽移动</div>
+
         <div class="modal" id="detail-modal">
             <p style="font-size:0.85rem; color:#999; margin-bottom:15px;" id="modal-date"></p>
             <p style="font-size:1.1rem; line-height:1.8; color:#444; text-align:justify;" id="modal-content"></p>
@@ -377,7 +349,6 @@
 
         <div class="modal" id="delete-confirm-modal">
             <h3 style="margin-top:0; color:#555;">确认清理？</h3>
-            <p style="color:#666; font-size:0.95rem; line-height:1.5;">这条心法将随风而去，<br>云端记录也将同步移除。</p>
             <div class="modal-btn-group">
                 <button class="nav-btn" style="border:1px solid #ddd; width:auto;" onclick="closeDeleteConfirm()">取消</button>
                 <button class="nav-btn btn-confirm-delete" onclick="executeDelete()">确认删除</button>
@@ -389,269 +360,143 @@
         const FILENAME = 'wishes.json';
         let wishes = JSON.parse(localStorage.getItem('mindset_wishes')) || [];
         let currentWishId = null; 
-
-        // 配色
         const BUBBLE_COLORS = ['rgba(255, 183, 178, 0.9)', 'rgba(255, 223, 186, 0.9)', 'rgba(255, 255, 186, 0.9)', 'rgba(186, 255, 201, 0.9)', 'rgba(186, 225, 255, 0.9)', 'rgba(226, 194, 255, 0.9)', 'rgba(255, 218, 233, 0.9)'];
 
-        // --- 1. 初始化 & 自动同步逻辑 ---
-        
+        // --- Pan & Zoom 变量 ---
+        let stageState = {
+            scale: 1,
+            panning: false,
+            pointX: 0,
+            pointY: 0,
+            startX: 0,
+            startY: 0
+        };
+
         window.onload = function() {
             loadSettings();
             initBg();
+            if (isConfigured()) autoSyncFromCloud();
+            else updateStatus('local', '未配置云同步，仅本地存储');
             
-            // 检查是否有配置，有则自动拉取
-            if (isConfigured()) {
-                autoSyncFromCloud();
-            } else {
-                updateStatus('local', '未配置云同步，仅本地存储');
-            }
+            // 初始化交互事件
+            initPanZoom();
         };
 
-        function isConfigured() {
-            return localStorage.getItem('gh_token') && localStorage.getItem('gh_username') && localStorage.getItem('gh_repo');
-        }
+        // --- 1. 核心交互：Pan & Zoom (适配PC和手机) ---
+        function initPanZoom() {
+            const container = document.getElementById('history-view');
+            const stage = document.getElementById('universe-stage');
 
-        // --- 2. 核心操作 ---
-
-        async function submitWish() {
-            const input = document.getElementById('wish-input');
-            const content = input.value.trim();
-            if (!content) return showToast('⚠️ 心法内容不能为空');
-
-            // 锁定按钮防止重复提交
-            const btn = document.getElementById('btn-submit');
-            btn.disabled = true;
-            btn.innerText = "⏳ 正在同步...";
-
-            const newWish = {
-                id: Date.now(),
-                content: content,
-                date: new Date().toLocaleString('zh-CN', { hour12: false })
-            };
-
-            wishes.push(newWish);
-            saveToLocal();
-            
-            // 尝试云端同步
-            if (isConfigured()) {
-                const success = await syncToGithub();
-                if (success) {
-                    showToast('✅ 已保存并同步到云端');
-                } else {
-                    showToast('⚠️ 已存本地，但云端同步失败');
-                }
-            } else {
-                showToast('✅ 已保存到本地 (未配置云端)');
-            }
-
-            input.value = '';
-            btn.disabled = false;
-            btn.innerText = "🌟 注入能量";
-        }
-
-        async function executeDelete() {
-            if (!currentWishId) return;
-
-            wishes = wishes.filter(w => w.id !== currentWishId);
-            saveToLocal();
-            closeDeleteConfirm();
-            closeModal();
-            
-            // 刷新历史视图
-            if (wishes.length > 0) openHistory();
-            else document.getElementById('bubbles-container').innerHTML = '';
-
-            // 自动同步
-            if (isConfigured()) {
-                showToast('🗑️ 正在删除云端备份...');
-                const success = await syncToGithub();
-                if (success) showToast('✅ 云端已同步清理');
-                else showToast('⚠️ 本地已删，云端同步失败');
-            } else {
-                showToast('🗑️ 本地已清理');
-            }
-        }
-
-        // --- 3. GitHub 同步引擎 (核心修复) ---
-
-        // 自动拉取
-        async function autoSyncFromCloud() {
-            updateStatus('loading', '正在从云端拉取数据...');
-            try {
-                const data = await fetchGithubFile();
-                if (data) {
-                    wishes = data;
-                    saveToLocal();
-                    updateStatus('success', '云端数据已同步');
-                } else {
-                    // 文件不存在（可能是新仓库），保持本地数据
-                    updateStatus('success', '云端就绪 (新仓库)');
-                }
-            } catch (error) {
-                console.error(error);
-                updateStatus('error', '云端同步失败: ' + error.message);
-            }
-        }
-
-        // 上传/覆盖 (核心修复版)
-        async function syncToGithub() {
-            const token = localStorage.getItem('gh_token');
-            const user = localStorage.getItem('gh_username').trim(); // 去空格
-            let repo = localStorage.getItem('gh_repo').trim(); // 去空格
-            
-            // 智能纠错：如果用户填了 user/repo，去掉 user/
-            if(repo.includes('/')) {
-                repo = repo.split('/').pop();
-            }
-
-            const url = `https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`;
-            
-            try {
-                // 1. 获取现有文件的 SHA (为了覆盖)
-                let sha = null;
-                const getRes = await fetch(url, {
-                    headers: { 
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-
-                if (getRes.ok) {
-                    const getData = await getRes.json();
-                    sha = getData.sha;
-                } else if (getRes.status === 404) {
-                    // 文件不存在，正常，我们即将创建
-                } else if (getRes.status === 401) {
-                    throw new Error("Token 无效或过期");
-                } else if (getRes.status === 403) {
-                    throw new Error("Token 权限不足 (需勾选 repo)");
-                } else {
-                    throw new Error(`连接错误 (${getRes.status})`);
-                }
-
-                // 2. 上传数据
-                const contentBase64 = utf8_to_b64(JSON.stringify(wishes, null, 2));
-                const body = {
-                    message: "update wishes from mindset garden",
-                    content: contentBase64
-                };
-                if (sha) body.sha = sha;
-
-                const putRes = await fetch(url, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                });
-
-                if (!putRes.ok) throw new Error("保存失败");
-                return true;
-
-            } catch (e) {
-                console.error("Sync Error:", e);
-                // 弹窗提示具体错误，帮助用户修复
-                alert(`⚠️ 保存失败：${e.message}\n请检查设置中的用户名、仓库名和 Token 是否正确。`);
-                return false;
-            }
-        }
-
-        // 获取文件
-        async function fetchGithubFile() {
-            const token = localStorage.getItem('gh_token');
-            const user = localStorage.getItem('gh_username').trim();
-            let repo = localStorage.getItem('gh_repo').trim();
-            if(repo.includes('/')) repo = repo.split('/').pop();
-
-            const url = `https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`;
-            
-            const res = await fetch(url, {
-                headers: { 
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
+            // --- 电脑端 (鼠标) ---
+            container.addEventListener('mousedown', (e) => {
+                // 如果点在弹窗或按钮上，不触发拖拽
+                if(e.target.closest('button') || e.target.closest('.modal')) return;
+                
+                stageState.panning = true;
+                stageState.startX = e.clientX - stageState.pointX;
+                stageState.startY = e.clientY - stageState.pointY;
+                container.style.cursor = 'grabbing';
             });
 
-            if (res.status === 404) return null; // 文件不存在
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            window.addEventListener('mouseup', () => {
+                stageState.panning = false;
+                container.style.cursor = 'grab';
+            });
 
-            const data = await res.json();
-            return JSON.parse(b64_to_utf8(data.content));
+            window.addEventListener('mousemove', (e) => {
+                if (!stageState.panning) return;
+                e.preventDefault();
+                stageState.pointX = e.clientX - stageState.startX;
+                stageState.pointY = e.clientY - stageState.startY;
+                updateTransform();
+            });
+
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const xs = (e.clientX - stageState.pointX) / stageState.scale;
+                const ys = (e.clientY - stageState.pointY) / stageState.scale;
+                const delta = -e.deltaY;
+                
+                // 缩放系数
+                (delta > 0) ? (stageState.scale *= 1.1) : (stageState.scale /= 1.1);
+                
+                // 限制缩放范围 (0.5倍 到 5倍)
+                stageState.scale = Math.min(Math.max(0.5, stageState.scale), 5);
+
+                stageState.pointX = e.clientX - xs * stageState.scale;
+                stageState.pointY = e.clientY - ys * stageState.scale;
+                updateTransform();
+            });
+
+            // --- 移动端 (触摸) ---
+            let initialDist = 0;
+            let initialScale = 1;
+
+            container.addEventListener('touchstart', (e) => {
+                if(e.target.closest('button') || e.target.closest('.modal')) return;
+
+                if (e.touches.length === 1) {
+                    // 单指拖拽
+                    stageState.panning = true;
+                    stageState.startX = e.touches[0].clientX - stageState.pointX;
+                    stageState.startY = e.touches[0].clientY - stageState.pointY;
+                } else if (e.touches.length === 2) {
+                    // 双指缩放
+                    stageState.panning = false;
+                    initialDist = Math.hypot(
+                        e.touches[0].pageX - e.touches[1].pageX,
+                        e.touches[0].pageY - e.touches[1].pageY
+                    );
+                    initialScale = stageState.scale;
+                }
+            }, {passive: false});
+
+            container.addEventListener('touchmove', (e) => {
+                e.preventDefault(); // 防止页面滚动
+                
+                if (e.touches.length === 1 && stageState.panning) {
+                    stageState.pointX = e.touches[0].clientX - stageState.startX;
+                    stageState.pointY = e.touches[0].clientY - stageState.startY;
+                    updateTransform();
+                } else if (e.touches.length === 2) {
+                    const dist = Math.hypot(
+                        e.touches[0].pageX - e.touches[1].pageX,
+                        e.touches[0].pageY - e.touches[1].pageY
+                    );
+                    if (initialDist > 0) {
+                        const delta = dist / initialDist;
+                        stageState.scale = initialScale * delta;
+                        stageState.scale = Math.min(Math.max(0.5, stageState.scale), 5); // 限制缩放
+                        updateTransform();
+                    }
+                }
+            }, {passive: false});
+
+            container.addEventListener('touchend', () => {
+                stageState.panning = false;
+            });
         }
 
-        // --- 4. 辅助功能 ---
+        function updateTransform() {
+            const stage = document.getElementById('universe-stage');
+            stage.style.transform = `translate(${stageState.pointX}px, ${stageState.pointY}px) scale(${stageState.scale})`;
+        }
 
-        function updateStatus(type, msg) {
-            const dot = document.getElementById('sync-dot');
-            const text = document.getElementById('sync-text');
-            text.innerText = msg;
+        function resetStage() {
+            stageState = { scale: 1, panning: false, pointX: 0, pointY: 0, startX: 0, startY: 0 };
+            updateTransform();
+        }
+
+        // --- 2. 气泡布局算法 (防重叠) ---
+        function placeBubbles(wishes) {
+            const container = document.getElementById('universe-stage');
+            container.innerHTML = '';
             
-            if (type === 'loading') {
-                dot.style.background = '#ffd700'; // 黄色
-            } else if (type === 'success') {
-                dot.style.background = '#4cd964'; // 绿色
-            } else if (type === 'error') {
-                dot.style.background = '#ff6b6b'; // 红色
-            } else {
-                dot.style.background = '#ccc'; // 灰色
-            }
-        }
-
-        function saveToLocal() {
-            localStorage.setItem('mindset_wishes', JSON.stringify(wishes));
-        }
-
-        // Base64 处理中文
-        function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
-        function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
-
-        function loadSettings() {
-            document.getElementById('gh-token').value = localStorage.getItem('gh_token') || '';
-            document.getElementById('gh-username').value = localStorage.getItem('gh_username') || '';
-            document.getElementById('gh-repo').value = localStorage.getItem('gh_repo') || '';
-        }
-
-        function saveSettings() {
-            const token = document.getElementById('gh-token').value.trim();
-            const user = document.getElementById('gh-username').value.trim();
-            const repo = document.getElementById('gh-repo').value.trim();
+            // 视口尺寸 (作为初始生成范围)
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
             
-            localStorage.setItem('gh_token', token);
-            localStorage.setItem('gh_username', user);
-            localStorage.setItem('gh_repo', repo);
-            
-            toggleSettings();
-            showToast('✅ 配置已保存，尝试同步...');
-            autoSyncFromCloud(); // 保存后立即尝试同步
-        }
-
-        // --- UI逻辑 (保持不变) ---
-        function toggleSettings() {
-            const panel = document.getElementById('settings-panel');
-            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
-        }
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.style.opacity = '1';
-            setTimeout(() => t.style.opacity = '0', 2500);
-        }
-        function askToDelete() { document.getElementById('delete-confirm-modal').style.display = 'block'; }
-        function closeDeleteConfirm() { document.getElementById('delete-confirm-modal').style.display = 'none'; }
-        function closeModal() { document.getElementById('detail-modal').style.display = 'none'; currentWishId = null; }
-        function closeHistory() {
-            const view = document.getElementById('history-view');
-            view.style.opacity = '0';
-            setTimeout(() => view.style.display = 'none', 500);
-            closeModal(); closeDeleteConfirm();
-        }
-        
-        function openHistory() {
-            const view = document.getElementById('history-view');
-            const container = document.getElementById('bubbles-container');
-            container.innerHTML = ''; 
-            if (wishes.length === 0) return showToast("📭 还没有记录哦");
+            const placedCircles = []; // 存储已放置的泡泡 {x, y, radius}
 
             const timestamps = wishes.map(w => w.id);
             const maxTime = Math.max(...timestamps);
@@ -661,37 +506,224 @@
             wishes.forEach(wish => {
                 const bubble = document.createElement('div');
                 bubble.className = 'wish-bubble';
+                
+                // 计算大小
                 let freshness = timeSpan === 0 ? 1 : (wish.id - minTime) / timeSpan;
-                let size = 30 + (freshness * 100);
-                let zIndex = Math.floor(freshness * 90) + 10;
-                let blur = (1 - freshness) * 2; 
+                let size = 40 + (freshness * 100); // 40px - 140px
+                let radius = size / 2;
+                
+                // 尝试找到一个不重叠的位置
+                let x, y;
+                let safe = false;
+                let attempts = 0;
+                
+                // 简单的碰撞检测算法：尝试 50 次寻找空位
+                while (!safe && attempts < 50) {
+                    // 在屏幕中心区域 90% 范围内随机
+                    x = Math.random() * (vw - size) + radius;
+                    y = Math.random() * (vh - size) + radius;
+                    
+                    safe = true;
+                    for (let c of placedCircles) {
+                        const dx = c.x - x;
+                        const dy = c.y - y;
+                        const distance = Math.sqrt(dx*dx + dy*dy);
+                        if (distance < (c.radius + radius + 10)) { // 10px 间距
+                            safe = false;
+                            break;
+                        }
+                    }
+                    attempts++;
+                }
+
+                // 如果尝试多次都找不到（太挤了），就扩大范围放置
+                if (!safe) {
+                    x = Math.random() * (vw * 1.5) - (vw * 0.25); // 扩大到1.5倍宽
+                    y = Math.random() * (vh * 1.5) - (vh * 0.25);
+                }
+
+                placedCircles.push({x, y, radius});
 
                 bubble.style.width = size + 'px';
                 bubble.style.height = size + 'px';
+                bubble.style.left = x + 'px';
+                bubble.style.top = y + 'px';
+                
+                // 样式属性
+                let zIndex = Math.floor(freshness * 90) + 10;
+                let blur = (1 - freshness) * 2; 
                 bubble.style.zIndex = zIndex;
                 bubble.style.filter = `blur(${blur}px)`;
-                bubble.style.left = Math.random() * 85 + 5 + '%';
-                bubble.style.top = Math.random() * 85 + 10 + '%';
                 bubble.style.background = BUBBLE_COLORS[Math.floor(Math.random() * BUBBLE_COLORS.length)];
-                bubble.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                bubble.style.animation = `breathe ${Math.random()*3+3}s infinite ease-in-out`;
 
-                bubble.onclick = () => {
-                    currentWishId = wish.id;
-                    document.getElementById('modal-date').innerText = wish.date;
-                    document.getElementById('modal-content').innerText = wish.content;
-                    document.getElementById('detail-modal').style.display = 'block';
-                };
+                // 点击交互 (阻止拖拽触发点击)
+                let isDragging = false;
+                bubble.addEventListener('touchstart', () => isDragging = false);
+                bubble.addEventListener('touchmove', () => isDragging = true);
+                bubble.addEventListener('touchend', () => {
+                    if (!isDragging) showDetail(wish);
+                });
+                bubble.addEventListener('click', (e) => {
+                    if (!stageState.panning) showDetail(wish);
+                });
+
                 container.appendChild(bubble);
             });
-            view.style.display = 'block';
-            setTimeout(() => view.style.opacity = '1', 10);
         }
 
+        function showDetail(wish) {
+            currentWishId = wish.id;
+            document.getElementById('modal-date').innerText = wish.date;
+            document.getElementById('modal-content').innerText = wish.content;
+            document.getElementById('detail-modal').style.display = 'block';
+        }
+
+        // --- 3. 业务逻辑 (同前) ---
+        function isConfigured() { return localStorage.getItem('gh_token') && localStorage.getItem('gh_repo'); }
+
+        async function submitWish() {
+            const input = document.getElementById('wish-input');
+            const content = input.value.trim();
+            if (!content) return showToast('⚠️ 心法内容不能为空');
+            
+            const btn = document.getElementById('btn-submit');
+            btn.disabled = true; btn.innerText = "⏳ 正在同步...";
+
+            wishes.push({
+                id: Date.now(), content: content, date: new Date().toLocaleString('zh-CN', { hour12: false })
+            });
+            saveToLocal();
+            
+            if (isConfigured()) await syncToGithub();
+            else showToast('✅ 已存本地');
+
+            input.value = ''; btn.disabled = false; btn.innerText = "🌟 注入能量";
+        }
+
+        async function executeDelete() {
+            if (!currentWishId) return;
+            wishes = wishes.filter(w => w.id !== currentWishId);
+            saveToLocal();
+            closeDeleteConfirm(); closeModal();
+            if (wishes.length > 0) placeBubbles(wishes); // 重新布局
+            else document.getElementById('universe-stage').innerHTML = '';
+            
+            if (isConfigured()) {
+                showToast('🗑️ 同步删除...');
+                await syncToGithub();
+            } else showToast('🗑️ 本地已删');
+        }
+
+        async function autoSyncFromCloud() {
+            updateStatus('loading', '正在拉取...');
+            try {
+                const data = await fetchGithubFile();
+                if (data) {
+                    wishes = data; saveToLocal(); updateStatus('success', '云端已同步');
+                } else updateStatus('success', '云端就绪');
+            } catch (e) { updateStatus('error', '同步异常'); }
+        }
+
+        async function syncToGithub() {
+            const token = localStorage.getItem('gh_token');
+            const user = localStorage.getItem('gh_username').trim();
+            let repo = localStorage.getItem('gh_repo').trim();
+            if(repo.includes('/')) repo = repo.split('/').pop();
+            const url = `https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`;
+            
+            try {
+                let sha = null;
+                const getRes = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
+                if (getRes.ok) sha = (await getRes.json()).sha;
+
+                const res = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: "update wishes",
+                        content: utf8_to_b64(JSON.stringify(wishes)),
+                        sha: sha
+                    })
+                });
+                if(res.ok) showToast('✅ 云端同步成功');
+                return res.ok;
+            } catch (e) { alert('同步失败: ' + e.message); return false; }
+        }
+
+        async function fetchGithubFile() {
+            const token = localStorage.getItem('gh_token');
+            const user = localStorage.getItem('gh_username').trim();
+            let repo = localStorage.getItem('gh_repo').trim();
+            if(repo.includes('/')) repo = repo.split('/').pop();
+            const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+            if (res.status === 404) return null;
+            const data = await res.json();
+            return JSON.parse(b64_to_utf8(data.content));
+        }
+
+        // --- 辅助 ---
+        function updateStatus(type, msg) {
+            const dot = document.getElementById('sync-dot');
+            document.getElementById('sync-text').innerText = msg;
+            dot.style.background = (type === 'success') ? '#4cd964' : (type === 'error' ? '#ff6b6b' : '#ffd700');
+        }
+        function saveToLocal() { localStorage.setItem('mindset_wishes', JSON.stringify(wishes)); }
+        function utf8_to_b64(str) { return window.btoa(unescape(encodeURIComponent(str))); }
+        function b64_to_utf8(str) { return decodeURIComponent(escape(window.atob(str))); }
+        
+        function openHistory() {
+            const view = document.getElementById('history-view');
+            const hint = document.getElementById('gesture-hint');
+            if (wishes.length === 0) return showToast("📭 还没有记录哦");
+            
+            resetStage(); // 重置视角
+            placeBubbles(wishes); // 计算不重叠位置
+            
+            view.style.display = 'block';
+            setTimeout(() => { view.style.opacity = '1'; hint.style.opacity = '1'; }, 10);
+            
+            // 3秒后隐藏手势提示
+            setTimeout(() => { hint.style.opacity = '0'; }, 3000);
+        }
+
+        function closeHistory() {
+            const view = document.getElementById('history-view');
+            view.style.opacity = '0';
+            setTimeout(() => view.style.display = 'none', 500);
+            closeModal();
+        }
+
+        // 设置与UI通用
+        function toggleSettings() { 
+            const p = document.getElementById('settings-panel'); 
+            p.style.display = p.style.display==='flex'?'none':'flex'; 
+        }
+        function loadSettings() {
+            document.getElementById('gh-token').value = localStorage.getItem('gh_token') || '';
+            document.getElementById('gh-username').value = localStorage.getItem('gh_username') || '';
+            document.getElementById('gh-repo').value = localStorage.getItem('gh_repo') || '';
+        }
+        function saveSettings() {
+            localStorage.setItem('gh_token', document.getElementById('gh-token').value.trim());
+            localStorage.setItem('gh_username', document.getElementById('gh-username').value.trim());
+            localStorage.setItem('gh_repo', document.getElementById('gh-repo').value.trim());
+            toggleSettings(); autoSyncFromCloud();
+        }
+        function showToast(msg) {
+            const t = document.getElementById('toast'); t.innerText = msg; t.style.opacity = '1';
+            setTimeout(() => t.style.opacity = '0', 2500);
+        }
+        function askToDelete() { document.getElementById('delete-confirm-modal').style.display = 'block'; }
+        function closeDeleteConfirm() { document.getElementById('delete-confirm-modal').style.display = 'none'; }
+        function closeModal() { document.getElementById('detail-modal').style.display = 'none'; currentWishId = null; }
+        
         function initBg() {
             const bg = document.getElementById('bubbles-bg');
             for(let i=0; i<12; i++) {
-                let b = document.createElement('div');
-                b.className = 'bubble-bg';
+                let b = document.createElement('div'); b.className = 'bubble-bg';
                 let size = Math.random() * 80 + 30 + 'px';
                 b.style.width = size; b.style.height = size;
                 b.style.left = Math.random() * 100 + '%';
