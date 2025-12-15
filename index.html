@@ -19,25 +19,17 @@
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
+            margin: 0; padding: 0; height: 100%; width: 100%;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
             color: var(--text-main);
-            overflow: hidden; /* 禁止原生滚动 */
-            touch-action: none; /* 禁止原生触摸手势 */
+            overflow: hidden; touch-action: none;
         }
 
         /* 漂浮的背景装饰 */
         .bubble-bg {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            z-index: -1;
-            animation: float 20s infinite linear;
-            pointer-events: none;
+            position: absolute; background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%; z-index: -1; animation: float 20s infinite linear; pointer-events: none;
         }
 
         @keyframes float {
@@ -48,198 +40,89 @@
 
         /* 主容器 */
         .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-            position: relative;
-            z-index: 10;
-            transition: opacity 0.5s ease;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100%; padding: 20px; box-sizing: border-box; position: relative;
+            z-index: 10; transition: opacity 0.5s ease;
         }
 
         /* 磨砂玻璃卡片 */
         .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 40px 30px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: var(--shadow);
-            text-align: center;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 24px; padding: 40px 30px;
+            width: 100%; max-width: 500px; box-shadow: var(--shadow);
+            text-align: center; position: relative; display: flex; flex-direction: column; justify-content: center;
         }
 
-        h1 {
-            font-weight: 300;
-            color: var(--text-highlight);
-            margin-bottom: 5px;
-            letter-spacing: 2px;
-            font-size: 1.8rem;
-        }
-        
-        .subtitle {
-            font-size: 0.9rem;
-            color: #888;
-            margin-bottom: 25px;
-        }
+        h1 { font-weight: 300; color: var(--text-highlight); margin-bottom: 5px; letter-spacing: 2px; font-size: 1.8rem; }
+        .subtitle { font-size: 0.9rem; color: #888; margin-bottom: 25px; }
 
         .status-indicator {
-            font-size: 0.75rem;
-            margin-bottom: 15px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            opacity: 0.7;
+            font-size: 0.75rem; margin-bottom: 15px; height: 20px;
+            display: flex; align-items: center; justify-content: center; gap: 6px; opacity: 0.7;
         }
-        .dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: #ccc;
-            transition: background 0.3s;
-        }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; transition: background 0.3s; }
 
         textarea {
-            width: 100%;
-            height: 150px;
-            background: rgba(255, 255, 255, 0.6);
-            border: 1px solid #fff;
-            border-radius: 16px;
-            padding: 15px;
-            font-size: 1rem;
-            color: #444;
-            outline: none;
-            resize: none;
-            box-sizing: border-box;
-            margin-bottom: 25px;
-            transition: all 0.3s;
+            width: 100%; height: 150px; background: rgba(255, 255, 255, 0.6);
+            border: 1px solid #fff; border-radius: 16px; padding: 15px;
+            font-size: 1rem; color: #444; outline: none; resize: none;
+            box-sizing: border-box; margin-bottom: 25px; transition: all 0.3s;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
         }
+        textarea:focus { background: rgba(255, 255, 255, 0.95); box-shadow: 0 0 15px rgba(161, 196, 253, 0.4); border-color: #a1c4fd; }
 
-        textarea:focus {
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 0 15px rgba(161, 196, 253, 0.4);
-            border-color: #a1c4fd;
-        }
-
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-            justify-content: center;
-        }
-
+        .btn-group { display: flex; flex-direction: column; gap: 15px; width: 100%; justify-content: center; }
         button {
-            border: none;
-            padding: 14px 25px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-            color: white;
-            font-weight: 500;
-            letter-spacing: 1px;
-            width: 100%;
+            border: none; padding: 14px 25px; border-radius: 50px; cursor: pointer;
+            font-size: 1rem; transition: transform 0.2s, box-shadow 0.2s; color: white;
+            font-weight: 500; letter-spacing: 1px; width: 100%;
         }
-
-        .btn-primary {
-            background: var(--btn-gradient);
-            box-shadow: 0 4px 15px rgba(161, 196, 253, 0.5);
-        }
-
-        .btn-secondary {
-            background: rgba(255,255,255,0.8);
-            color: #7c9ae6;
-            border: 1px solid #fff;
-        }
-
+        .btn-primary { background: var(--btn-gradient); box-shadow: 0 4px 15px rgba(161, 196, 253, 0.5); }
+        .btn-secondary { background: rgba(255,255,255,0.8); color: #7c9ae6; border: 1px solid #fff; }
         button:active { transform: scale(0.98); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        .settings-icon {
-            position: absolute; top: 20px; right: 20px;
-            cursor: pointer; opacity: 0.5; font-size: 1.2rem;
-            transition: opacity 0.3s; color: #7c9ae6;
-        }
+        .settings-icon { position: absolute; top: 20px; right: 20px; cursor: pointer; opacity: 0.5; font-size: 1.2rem; transition: opacity 0.3s; color: #7c9ae6; }
 
         #settings-panel {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,255,255,0.98); z-index: 20;
             flex-direction: column; justify-content: center; align-items: center; border-radius: 24px;
         }
-        .settings-input {
-            width: 80%; padding: 12px; margin: 10px 0;
-            border: 1px solid #eee; background: #f9f9f9; border-radius: 12px; font-size: 0.9rem;
-        }
+        .settings-input { width: 80%; padding: 12px; margin: 10px 0; border: 1px solid #eee; background: #f9f9f9; border-radius: 12px; font-size: 0.9rem; }
 
-        /* --- 历史星空视图 (升级版) --- */
+        /* --- 历史星空视图 --- */
         #history-view {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at center, #f5f7fa 0%, #c3cfe2 100%);
-            z-index: 50;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.5s;
-            overflow: hidden; /* 隐藏溢出 */
-            cursor: grab; /* 提示可拖拽 */
+            z-index: 50; display: none; opacity: 0; transition: opacity 0.5s;
+            overflow: hidden; cursor: grab;
         }
-        
         #history-view:active { cursor: grabbing; }
 
         .history-controls {
-            position: absolute;
-            top: 20px; left: 20px; right: 20px;
-            display: flex; justify-content: space-between;
-            z-index: 60; /* 确保在泡泡之上 */
-            pointer-events: none; /* 让点击穿透，只响应按钮 */
+            position: absolute; top: 20px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between; z-index: 60; pointer-events: none;
         }
-        
-        .history-controls button, .history-controls span {
-            pointer-events: auto; /* 恢复按钮点击 */
-        }
+        .history-controls button, .history-controls span { pointer-events: auto; }
 
         .nav-btn {
-            background: rgba(255,255,255,0.5); color: #666;
-            padding: 8px 15px; font-size: 0.9rem; border-radius: 20px;
-            backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.5); width: auto;
+            background: rgba(255,255,255,0.5); color: #666; padding: 8px 15px;
+            font-size: 0.9rem; border-radius: 20px; backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.5); width: auto;
         }
 
-        /* 宇宙容器：用于承载泡泡并进行缩放平移 */
         #universe-stage {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            transform-origin: 0 0; /* 从左上角变换，便于计算 */
-            /* 3D透视效果 */
-            perspective: 1000px;
-            transform-style: preserve-3d;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            transform-origin: 0 0; perspective: 1000px; transform-style: preserve-3d;
         }
 
-        /* 愿望气泡 */
         .wish-bubble {
-            position: absolute;
-            border-radius: 50%;
-            cursor: pointer;
+            position: absolute; border-radius: 50%; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            color: transparent; 
-            box-shadow: inset 0 0 10px rgba(255,255,255,0.6), 0 5px 15px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,0.3);
-            /* 优化性能 */
-            will-change: transform;
-            /* 默认居中，位置由JS控制 */
-            transform: translate(-50%, -50%); 
+            color: transparent; box-shadow: inset 0 0 10px rgba(255,255,255,0.6), 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.3); will-change: transform; transform: translate(-50%, -50%);
         }
-        
         .wish-bubble::after {
             content: ''; position: absolute; top: 20%; left: 20%; width: 25%; height: 12%;
             background: rgba(255,255,255,0.8); border-radius: 50%; transform: rotate(-45deg);
@@ -251,18 +134,46 @@
             50% { transform: translate(-50%, -50%) scale(1.05); }
         }
 
-        /* 弹窗样式 */
+        /* --- 核心修复：弹窗样式优化 (支持长文滚动) --- */
         .modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
-            padding: 30px; border-radius: 24px; width: 80%; max-width: 400px;
+            padding: 25px; border-radius: 24px; width: 85%; max-width: 400px;
+            /* 关键修改：限制高度并使用 flex 布局 */
+            max-height: 80vh; 
+            display: flex; flex-direction: column;
             box-shadow: 0 20px 60px rgba(161, 196, 253, 0.3); text-align: center;
             display: none; border: 1px solid rgba(255,255,255,1);
         }
+
+        #modal-date {
+            font-size: 0.85rem; color: #999; margin-bottom: 10px;
+            flex-shrink: 0; /* 日期不压缩 */
+        }
+
+        #modal-content {
+            font-size: 1.1rem; line-height: 1.6; color: #444; text-align: left;
+            margin-bottom: 20px;
+            /* 关键修改：内容区域可滚动 */
+            overflow-y: auto; 
+            flex: 1; /* 占据剩余空间 */
+            padding-right: 5px; /* 防止滚动条挡住文字 */
+            word-wrap: break-word; /* 防止长单词溢出 */
+        }
+        
+        /* 自定义滚动条样式 (美化) */
+        #modal-content::-webkit-scrollbar { width: 4px; }
+        #modal-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+
+        .modal-btn-group { 
+            display: flex; gap: 15px; margin-top: 0; justify-content: center; 
+            flex-shrink: 0; /* 按钮区不压缩 */
+        }
+        /* ------------------------------------------- */
+
         #detail-modal { z-index: 2000; }
         #delete-confirm-modal { z-index: 3000; }
         
-        .modal-btn-group { display: flex; gap: 15px; margin-top: 25px; justify-content: center; }
         .modal-close-btn { background: #f0f2f5; color: #555; border: none; flex: 2; }
         .modal-delete-btn { background: var(--danger-bg); border: 1px solid var(--danger-text); color: var(--danger-text); flex: 1; }
         .btn-confirm-delete { background: #ff6b6b; color: white; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3); width: auto; }
@@ -276,7 +187,6 @@
             width: max-content; max-width: 90%;
         }
 
-        /* 操作提示层 */
         .gesture-hint {
             position: absolute; bottom: 30px; left: 0; width: 100%;
             text-align: center; color: #888; font-size: 0.8rem;
@@ -333,14 +243,14 @@
             <span style="font-size:0.8rem; color:#888; align-self:center;" id="sync-status-badge"></span>
         </div>
         
-        <!-- 宇宙舞台 (放这里面可以整体缩放) -->
         <div id="universe-stage"></div>
-        
         <div class="gesture-hint" id="gesture-hint">☝️ 双指缩放 · 拖拽移动</div>
 
+        <!-- 详情弹窗 -->
         <div class="modal" id="detail-modal">
-            <p style="font-size:0.85rem; color:#999; margin-bottom:15px;" id="modal-date"></p>
-            <p style="font-size:1.1rem; line-height:1.8; color:#444; text-align:justify;" id="modal-content"></p>
+            <div id="modal-date"></div>
+            <!-- 使用div代替p，方便滚动 -->
+            <div id="modal-content"></div>
             <div class="modal-btn-group">
                 <button class="nav-btn modal-delete-btn" style="width:auto;" onclick="askToDelete()">🗑️ 删除</button>
                 <button class="nav-btn modal-close-btn" style="width:auto;" onclick="closeModal()">收起</button>
@@ -362,47 +272,31 @@
         let currentWishId = null; 
         const BUBBLE_COLORS = ['rgba(255, 183, 178, 0.9)', 'rgba(255, 223, 186, 0.9)', 'rgba(255, 255, 186, 0.9)', 'rgba(186, 255, 201, 0.9)', 'rgba(186, 225, 255, 0.9)', 'rgba(226, 194, 255, 0.9)', 'rgba(255, 218, 233, 0.9)'];
 
-        // --- Pan & Zoom 变量 ---
-        let stageState = {
-            scale: 1,
-            panning: false,
-            pointX: 0,
-            pointY: 0,
-            startX: 0,
-            startY: 0
-        };
+        let stageState = { scale: 1, panning: false, pointX: 0, pointY: 0, startX: 0, startY: 0 };
 
         window.onload = function() {
             loadSettings();
             initBg();
             if (isConfigured()) autoSyncFromCloud();
             else updateStatus('local', '未配置云同步，仅本地存储');
-            
-            // 初始化交互事件
             initPanZoom();
         };
 
-        // --- 1. 核心交互：Pan & Zoom (适配PC和手机) ---
         function initPanZoom() {
             const container = document.getElementById('history-view');
-            const stage = document.getElementById('universe-stage');
-
-            // --- 电脑端 (鼠标) ---
+            
+            // PC
             container.addEventListener('mousedown', (e) => {
-                // 如果点在弹窗或按钮上，不触发拖拽
                 if(e.target.closest('button') || e.target.closest('.modal')) return;
-                
                 stageState.panning = true;
                 stageState.startX = e.clientX - stageState.pointX;
                 stageState.startY = e.clientY - stageState.pointY;
                 container.style.cursor = 'grabbing';
             });
-
             window.addEventListener('mouseup', () => {
                 stageState.panning = false;
                 container.style.cursor = 'grab';
             });
-
             window.addEventListener('mousemove', (e) => {
                 if (!stageState.panning) return;
                 e.preventDefault();
@@ -410,71 +304,44 @@
                 stageState.pointY = e.clientY - stageState.startY;
                 updateTransform();
             });
-
             container.addEventListener('wheel', (e) => {
                 e.preventDefault();
-                const xs = (e.clientX - stageState.pointX) / stageState.scale;
-                const ys = (e.clientY - stageState.pointY) / stageState.scale;
                 const delta = -e.deltaY;
-                
-                // 缩放系数
                 (delta > 0) ? (stageState.scale *= 1.1) : (stageState.scale /= 1.1);
-                
-                // 限制缩放范围 (0.5倍 到 5倍)
                 stageState.scale = Math.min(Math.max(0.5, stageState.scale), 5);
-
-                stageState.pointX = e.clientX - xs * stageState.scale;
-                stageState.pointY = e.clientY - ys * stageState.scale;
                 updateTransform();
             });
 
-            // --- 移动端 (触摸) ---
-            let initialDist = 0;
-            let initialScale = 1;
-
+            // Mobile
+            let initialDist = 0; let initialScale = 1;
             container.addEventListener('touchstart', (e) => {
                 if(e.target.closest('button') || e.target.closest('.modal')) return;
-
                 if (e.touches.length === 1) {
-                    // 单指拖拽
                     stageState.panning = true;
                     stageState.startX = e.touches[0].clientX - stageState.pointX;
                     stageState.startY = e.touches[0].clientY - stageState.pointY;
                 } else if (e.touches.length === 2) {
-                    // 双指缩放
                     stageState.panning = false;
-                    initialDist = Math.hypot(
-                        e.touches[0].pageX - e.touches[1].pageX,
-                        e.touches[0].pageY - e.touches[1].pageY
-                    );
+                    initialDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
                     initialScale = stageState.scale;
                 }
             }, {passive: false});
 
             container.addEventListener('touchmove', (e) => {
-                e.preventDefault(); // 防止页面滚动
-                
+                e.preventDefault();
                 if (e.touches.length === 1 && stageState.panning) {
                     stageState.pointX = e.touches[0].clientX - stageState.startX;
                     stageState.pointY = e.touches[0].clientY - stageState.startY;
                     updateTransform();
-                } else if (e.touches.length === 2) {
-                    const dist = Math.hypot(
-                        e.touches[0].pageX - e.touches[1].pageX,
-                        e.touches[0].pageY - e.touches[1].pageY
-                    );
-                    if (initialDist > 0) {
-                        const delta = dist / initialDist;
-                        stageState.scale = initialScale * delta;
-                        stageState.scale = Math.min(Math.max(0.5, stageState.scale), 5); // 限制缩放
-                        updateTransform();
-                    }
+                } else if (e.touches.length === 2 && initialDist > 0) {
+                    const dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+                    stageState.scale = initialScale * (dist / initialDist);
+                    stageState.scale = Math.min(Math.max(0.5, stageState.scale), 5);
+                    updateTransform();
                 }
             }, {passive: false});
 
-            container.addEventListener('touchend', () => {
-                stageState.panning = false;
-            });
+            container.addEventListener('touchend', () => { stageState.panning = false; });
         }
 
         function updateTransform() {
@@ -487,87 +354,45 @@
             updateTransform();
         }
 
-        // --- 2. 气泡布局算法 (防重叠) ---
         function placeBubbles(wishes) {
             const container = document.getElementById('universe-stage');
             container.innerHTML = '';
-            
-            // 视口尺寸 (作为初始生成范围)
-            const vw = window.innerWidth;
-            const vh = window.innerHeight;
-            
-            const placedCircles = []; // 存储已放置的泡泡 {x, y, radius}
-
+            const vw = window.innerWidth; const vh = window.innerHeight;
+            const placedCircles = [];
             const timestamps = wishes.map(w => w.id);
-            const maxTime = Math.max(...timestamps);
-            const minTime = Math.min(...timestamps);
+            const maxTime = Math.max(...timestamps); const minTime = Math.min(...timestamps);
             const timeSpan = maxTime - minTime;
 
             wishes.forEach(wish => {
-                const bubble = document.createElement('div');
-                bubble.className = 'wish-bubble';
-                
-                // 计算大小
+                const bubble = document.createElement('div'); bubble.className = 'wish-bubble';
                 let freshness = timeSpan === 0 ? 1 : (wish.id - minTime) / timeSpan;
-                let size = 40 + (freshness * 100); // 40px - 140px
-                let radius = size / 2;
+                let size = 40 + (freshness * 100); let radius = size / 2;
                 
-                // 尝试找到一个不重叠的位置
-                let x, y;
-                let safe = false;
-                let attempts = 0;
-                
-                // 简单的碰撞检测算法：尝试 50 次寻找空位
+                let x, y, safe = false, attempts = 0;
                 while (!safe && attempts < 50) {
-                    // 在屏幕中心区域 90% 范围内随机
                     x = Math.random() * (vw - size) + radius;
                     y = Math.random() * (vh - size) + radius;
-                    
                     safe = true;
                     for (let c of placedCircles) {
-                        const dx = c.x - x;
-                        const dy = c.y - y;
-                        const distance = Math.sqrt(dx*dx + dy*dy);
-                        if (distance < (c.radius + radius + 10)) { // 10px 间距
-                            safe = false;
-                            break;
-                        }
+                        if (Math.sqrt(Math.pow(c.x-x,2) + Math.pow(c.y-y,2)) < (c.radius + radius + 10)) { safe = false; break; }
                     }
                     attempts++;
                 }
-
-                // 如果尝试多次都找不到（太挤了），就扩大范围放置
-                if (!safe) {
-                    x = Math.random() * (vw * 1.5) - (vw * 0.25); // 扩大到1.5倍宽
-                    y = Math.random() * (vh * 1.5) - (vh * 0.25);
-                }
-
+                if (!safe) { x = Math.random() * (vw * 1.5) - (vw * 0.25); y = Math.random() * (vh * 1.5) - (vh * 0.25); }
                 placedCircles.push({x, y, radius});
 
-                bubble.style.width = size + 'px';
-                bubble.style.height = size + 'px';
-                bubble.style.left = x + 'px';
-                bubble.style.top = y + 'px';
-                
-                // 样式属性
-                let zIndex = Math.floor(freshness * 90) + 10;
-                let blur = (1 - freshness) * 2; 
-                bubble.style.zIndex = zIndex;
-                bubble.style.filter = `blur(${blur}px)`;
+                bubble.style.width = size + 'px'; bubble.style.height = size + 'px';
+                bubble.style.left = x + 'px'; bubble.style.top = y + 'px';
+                bubble.style.zIndex = Math.floor(freshness * 90) + 10;
+                bubble.style.filter = `blur(${(1 - freshness) * 2}px)`;
                 bubble.style.background = BUBBLE_COLORS[Math.floor(Math.random() * BUBBLE_COLORS.length)];
                 bubble.style.animation = `breathe ${Math.random()*3+3}s infinite ease-in-out`;
 
-                // 点击交互 (阻止拖拽触发点击)
                 let isDragging = false;
                 bubble.addEventListener('touchstart', () => isDragging = false);
                 bubble.addEventListener('touchmove', () => isDragging = true);
-                bubble.addEventListener('touchend', () => {
-                    if (!isDragging) showDetail(wish);
-                });
-                bubble.addEventListener('click', (e) => {
-                    if (!stageState.panning) showDetail(wish);
-                });
-
+                bubble.addEventListener('touchend', () => { if (!isDragging) showDetail(wish); });
+                bubble.addEventListener('click', () => { if (!stageState.panning) showDetail(wish); });
                 container.appendChild(bubble);
             });
         }
@@ -576,28 +401,20 @@
             currentWishId = wish.id;
             document.getElementById('modal-date').innerText = wish.date;
             document.getElementById('modal-content').innerText = wish.content;
-            document.getElementById('detail-modal').style.display = 'block';
+            document.getElementById('detail-modal').style.display = 'flex'; // 使用 flex 布局
         }
 
-        // --- 3. 业务逻辑 (同前) ---
         function isConfigured() { return localStorage.getItem('gh_token') && localStorage.getItem('gh_repo'); }
 
         async function submitWish() {
             const input = document.getElementById('wish-input');
             const content = input.value.trim();
             if (!content) return showToast('⚠️ 心法内容不能为空');
-            
             const btn = document.getElementById('btn-submit');
             btn.disabled = true; btn.innerText = "⏳ 正在同步...";
-
-            wishes.push({
-                id: Date.now(), content: content, date: new Date().toLocaleString('zh-CN', { hour12: false })
-            });
+            wishes.push({ id: Date.now(), content: content, date: new Date().toLocaleString('zh-CN', { hour12: false }) });
             saveToLocal();
-            
-            if (isConfigured()) await syncToGithub();
-            else showToast('✅ 已存本地');
-
+            if (isConfigured()) await syncToGithub(); else showToast('✅ 已存本地');
             input.value = ''; btn.disabled = false; btn.innerText = "🌟 注入能量";
         }
 
@@ -606,22 +423,15 @@
             wishes = wishes.filter(w => w.id !== currentWishId);
             saveToLocal();
             closeDeleteConfirm(); closeModal();
-            if (wishes.length > 0) placeBubbles(wishes); // 重新布局
-            else document.getElementById('universe-stage').innerHTML = '';
-            
-            if (isConfigured()) {
-                showToast('🗑️ 同步删除...');
-                await syncToGithub();
-            } else showToast('🗑️ 本地已删');
+            if (wishes.length > 0) placeBubbles(wishes); else document.getElementById('universe-stage').innerHTML = '';
+            if (isConfigured()) { showToast('🗑️ 同步删除...'); await syncToGithub(); } else showToast('🗑️ 本地已删');
         }
 
         async function autoSyncFromCloud() {
             updateStatus('loading', '正在拉取...');
             try {
                 const data = await fetchGithubFile();
-                if (data) {
-                    wishes = data; saveToLocal(); updateStatus('success', '云端已同步');
-                } else updateStatus('success', '云端就绪');
+                if (data) { wishes = data; saveToLocal(); updateStatus('success', '云端已同步'); } else updateStatus('success', '云端就绪');
             } catch (e) { updateStatus('error', '同步异常'); }
         }
 
@@ -631,23 +441,15 @@
             let repo = localStorage.getItem('gh_repo').trim();
             if(repo.includes('/')) repo = repo.split('/').pop();
             const url = `https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`;
-            
             try {
                 let sha = null;
                 const getRes = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
                 if (getRes.ok) sha = (await getRes.json()).sha;
-
                 const res = await fetch(url, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: "update wishes",
-                        content: utf8_to_b64(JSON.stringify(wishes)),
-                        sha: sha
-                    })
+                    method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "update wishes", content: utf8_to_b64(JSON.stringify(wishes)), sha: sha })
                 });
-                if(res.ok) showToast('✅ 云端同步成功');
-                return res.ok;
+                if(res.ok) showToast('✅ 云端同步成功'); return res.ok;
             } catch (e) { alert('同步失败: ' + e.message); return false; }
         }
 
@@ -656,15 +458,12 @@
             const user = localStorage.getItem('gh_username').trim();
             let repo = localStorage.getItem('gh_repo').trim();
             if(repo.includes('/')) repo = repo.split('/').pop();
-            const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`, {
-                headers: { 'Authorization': `token ${token}` }
-            });
+            const res = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${FILENAME}`, { headers: { 'Authorization': `token ${token}` } });
             if (res.status === 404) return null;
             const data = await res.json();
             return JSON.parse(b64_to_utf8(data.content));
         }
 
-        // --- 辅助 ---
         function updateStatus(type, msg) {
             const dot = document.getElementById('sync-dot');
             document.getElementById('sync-text').innerText = msg;
@@ -678,29 +477,17 @@
             const view = document.getElementById('history-view');
             const hint = document.getElementById('gesture-hint');
             if (wishes.length === 0) return showToast("📭 还没有记录哦");
-            
-            resetStage(); // 重置视角
-            placeBubbles(wishes); // 计算不重叠位置
-            
+            resetStage(); placeBubbles(wishes);
             view.style.display = 'block';
             setTimeout(() => { view.style.opacity = '1'; hint.style.opacity = '1'; }, 10);
-            
-            // 3秒后隐藏手势提示
             setTimeout(() => { hint.style.opacity = '0'; }, 3000);
         }
-
         function closeHistory() {
             const view = document.getElementById('history-view');
-            view.style.opacity = '0';
-            setTimeout(() => view.style.display = 'none', 500);
+            view.style.opacity = '0'; setTimeout(() => view.style.display = 'none', 500);
             closeModal();
         }
-
-        // 设置与UI通用
-        function toggleSettings() { 
-            const p = document.getElementById('settings-panel'); 
-            p.style.display = p.style.display==='flex'?'none':'flex'; 
-        }
+        function toggleSettings() { const p = document.getElementById('settings-panel'); p.style.display = p.style.display==='flex'?'none':'flex'; }
         function loadSettings() {
             document.getElementById('gh-token').value = localStorage.getItem('gh_token') || '';
             document.getElementById('gh-username').value = localStorage.getItem('gh_username') || '';
@@ -713,8 +500,7 @@
             toggleSettings(); autoSyncFromCloud();
         }
         function showToast(msg) {
-            const t = document.getElementById('toast'); t.innerText = msg; t.style.opacity = '1';
-            setTimeout(() => t.style.opacity = '0', 2500);
+            const t = document.getElementById('toast'); t.innerText = msg; t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 2500);
         }
         function askToDelete() { document.getElementById('delete-confirm-modal').style.display = 'block'; }
         function closeDeleteConfirm() { document.getElementById('delete-confirm-modal').style.display = 'none'; }
@@ -724,11 +510,8 @@
             const bg = document.getElementById('bubbles-bg');
             for(let i=0; i<12; i++) {
                 let b = document.createElement('div'); b.className = 'bubble-bg';
-                let size = Math.random() * 80 + 30 + 'px';
-                b.style.width = size; b.style.height = size;
-                b.style.left = Math.random() * 100 + '%';
-                b.style.animationDuration = Math.random() * 15 + 10 + 's';
-                b.style.animationDelay = Math.random() * 5 + 's';
+                let size = Math.random() * 80 + 30 + 'px'; b.style.width = size; b.style.height = size;
+                b.style.left = Math.random() * 100 + '%'; b.style.animationDuration = Math.random() * 15 + 10 + 's'; b.style.animationDelay = Math.random() * 5 + 's';
                 bg.appendChild(b);
             }
         }
