@@ -23,7 +23,10 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
             color: var(--text-main);
-            overflow: hidden; touch-action: none;
+            overflow: hidden; 
+            /* 注意：这里保留 touch-action: none 用于防止背景拖拽时的默认刷新/滚动，
+               但会在 #modal-content 中覆盖它以允许弹窗滚动 */
+            touch-action: none; 
         }
 
         /* 漂浮的背景装饰 */
@@ -68,6 +71,8 @@
             font-size: 1rem; color: #444; outline: none; resize: none;
             box-sizing: border-box; margin-bottom: 25px; transition: all 0.3s;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+            /* 输入框允许操作 */
+            touch-action: manipulation;
         }
         textarea:focus { background: rgba(255, 255, 255, 0.95); box-shadow: 0 0 15px rgba(161, 196, 253, 0.4); border-color: #a1c4fd; }
 
@@ -76,6 +81,7 @@
             border: none; padding: 14px 25px; border-radius: 50px; cursor: pointer;
             font-size: 1rem; transition: transform 0.2s, box-shadow 0.2s; color: white;
             font-weight: 500; letter-spacing: 1px; width: 100%;
+            touch-action: manipulation;
         }
         .btn-primary { background: var(--btn-gradient); box-shadow: 0 4px 15px rgba(161, 196, 253, 0.5); }
         .btn-secondary { background: rgba(255,255,255,0.8); color: #7c9ae6; border: 1px solid #fff; }
@@ -134,31 +140,35 @@
             50% { transform: translate(-50%, -50%) scale(1.05); }
         }
 
-        /* --- 核心修复：弹窗样式优化 (支持长文滚动) --- */
+        /* --- 弹窗样式 --- */
         .modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
             padding: 25px; border-radius: 24px; width: 85%; max-width: 400px;
-            /* 关键修改：限制高度并使用 flex 布局 */
             max-height: 80vh; 
             display: flex; flex-direction: column;
             box-shadow: 0 20px 60px rgba(161, 196, 253, 0.3); text-align: center;
             display: none; border: 1px solid rgba(255,255,255,1);
+            /* 恢复模态框内的默认触摸行为，否则无法滚动 */
+            touch-action: auto; 
         }
 
         #modal-date {
             font-size: 0.85rem; color: #999; margin-bottom: 10px;
-            flex-shrink: 0; /* 日期不压缩 */
+            flex-shrink: 0; 
         }
 
         #modal-content {
             font-size: 1.1rem; line-height: 1.6; color: #444; text-align: left;
             margin-bottom: 20px;
-            /* 关键修改：内容区域可滚动 */
+            /* 内容区域可滚动 */
             overflow-y: auto; 
-            flex: 1; /* 占据剩余空间 */
-            padding-right: 5px; /* 防止滚动条挡住文字 */
-            word-wrap: break-word; /* 防止长单词溢出 */
+            flex: 1; 
+            padding-right: 5px;
+            word-wrap: break-word; 
+            /* 关键：允许在内容区域进行垂直平移（即滚动） */
+            touch-action: pan-y; 
+            -webkit-overflow-scrolling: touch; /* 增加 iOS 滚动惯性 */
         }
         
         /* 自定义滚动条样式 (美化) */
@@ -167,9 +177,8 @@
 
         .modal-btn-group { 
             display: flex; gap: 15px; margin-top: 0; justify-content: center; 
-            flex-shrink: 0; /* 按钮区不压缩 */
+            flex-shrink: 0; 
         }
-        /* ------------------------------------------- */
 
         #detail-modal { z-index: 2000; }
         #delete-confirm-modal { z-index: 3000; }
@@ -249,7 +258,7 @@
         <!-- 详情弹窗 -->
         <div class="modal" id="detail-modal">
             <div id="modal-date"></div>
-            <!-- 使用div代替p，方便滚动 -->
+            <!-- 内容区域，支持独立滚动 -->
             <div id="modal-content"></div>
             <div class="modal-btn-group">
                 <button class="nav-btn modal-delete-btn" style="width:auto;" onclick="askToDelete()">🗑️ 删除</button>
@@ -282,21 +291,26 @@
             initPanZoom();
         };
 
+        // 修复后的 initPanZoom 函数
         function initPanZoom() {
             const container = document.getElementById('history-view');
             
-            // PC
+            // --- PC端鼠标操作 ---
+
             container.addEventListener('mousedown', (e) => {
+                // 如果点击的是按钮或弹窗，不触发背景拖拽
                 if(e.target.closest('button') || e.target.closest('.modal')) return;
                 stageState.panning = true;
                 stageState.startX = e.clientX - stageState.pointX;
                 stageState.startY = e.clientY - stageState.pointY;
                 container.style.cursor = 'grabbing';
             });
+
             window.addEventListener('mouseup', () => {
                 stageState.panning = false;
                 container.style.cursor = 'grab';
             });
+
             window.addEventListener('mousemove', (e) => {
                 if (!stageState.panning) return;
                 e.preventDefault();
@@ -304,18 +318,27 @@
                 stageState.pointY = e.clientY - stageState.startY;
                 updateTransform();
             });
+
             container.addEventListener('wheel', (e) => {
+                // 关键修复：如果鼠标在弹窗文字区域，允许默认滚动，不执行缩放
+                if (e.target.closest('#modal-content')) return;
+
                 e.preventDefault();
                 const delta = -e.deltaY;
                 (delta > 0) ? (stageState.scale *= 1.1) : (stageState.scale /= 1.1);
                 stageState.scale = Math.min(Math.max(0.5, stageState.scale), 5);
                 updateTransform();
-            });
+            }, { passive: false });
 
-            // Mobile
+
+            // --- 移动端触控操作 ---
+
             let initialDist = 0; let initialScale = 1;
+            
             container.addEventListener('touchstart', (e) => {
+                // 如果点击的是按钮或弹窗，不触发背景拖拽
                 if(e.target.closest('button') || e.target.closest('.modal')) return;
+                
                 if (e.touches.length === 1) {
                     stageState.panning = true;
                     stageState.startX = e.touches[0].clientX - stageState.pointX;
@@ -328,7 +351,11 @@
             }, {passive: false});
 
             container.addEventListener('touchmove', (e) => {
-                e.preventDefault();
+                // 关键修复：如果手指在弹窗文字区域滑动，允许默认滚动，不执行缩放/平移
+                if (e.target.closest('#modal-content')) return;
+
+                e.preventDefault(); // 阻止背景的默认滚动行为
+                
                 if (e.touches.length === 1 && stageState.panning) {
                     stageState.pointX = e.touches[0].clientX - stageState.startX;
                     stageState.pointY = e.touches[0].clientY - stageState.startY;
@@ -401,7 +428,7 @@
             currentWishId = wish.id;
             document.getElementById('modal-date').innerText = wish.date;
             document.getElementById('modal-content').innerText = wish.content;
-            document.getElementById('detail-modal').style.display = 'flex'; // 使用 flex 布局
+            document.getElementById('detail-modal').style.display = 'flex'; 
         }
 
         function isConfigured() { return localStorage.getItem('gh_token') && localStorage.getItem('gh_repo'); }
